@@ -14,5 +14,5 @@ from app.db.migrations.assinatura import Assinatura
 from app.db.migrations.genero_livro import GeneroLivro
 from app.db.migrations.autor import Autor
 from app.db.migrations.livro import Livro
-from app.db.migrations.item_carrinho import ItemCarrinho
+from app.db.migrations.item_carrinho import ItemCarrinho  
 from app.db.migrations.item_pedido import ItemPedido  

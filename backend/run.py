@@ -20,7 +20,7 @@ def create_app():
     # Registra o blueprint aqui
     app.register_blueprint(usuario_bp)
 
-    return app
+    return app   
 
 if __name__ == '__main__':
     app = create_app()

@@ -4,15 +4,15 @@ from app.routes.livro_routes import livro_bp
 
 
 # Modelos
-from app.models.usuario import Usuario
-from app.models.estado import Estado
-from app.models.endereco import Endereco
-from app.models.livro import Livro
-from app.models.autor import Autor
-from app.models.genero_livro import GeneroLivro
-from app.models.pix import Pix
-from app.models.pedido import Pedido
-from app.models.carrinho import Carrinho
-from app.models.item_carrinho import ItemCarrinho
-from app.models.item_pedido import ItemPedido
-from app.models.assinatura import Assinatura
+from app.db.migrations.estado import Estado
+from app.db.migrations.usuario import Usuario
+from app.db.migrations.endereco import Endereco
+from app.db.migrations.pagamento import Pagamento
+from app.db.migrations.pedido import Pedido
+from app.db.migrations.carrinho import Carrinho
+from app.db.migrations.assinatura import Assinatura
+from app.db.migrations.genero_livro import GeneroLivro
+from app.db.migrations.autor import Autor
+from app.db.migrations.livro import Livro
+from app.db.migrations.item_carrinho import ItemCarrinho
+from app.db.migrations.item_pedido import ItemPedido

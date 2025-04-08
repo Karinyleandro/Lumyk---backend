@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.db.database import db
-from app.models.livro import Livro
+from app.db.migrations.livro import Livro
 
 livro_bp = Blueprint('livro_bp', __name__)
 

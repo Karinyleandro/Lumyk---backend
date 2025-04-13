@@ -12,5 +12,3 @@ class Pagamento(db.Model):
             "id": self.id,
             "forma_pagamento": self.forma_pagamento
         }
-
-

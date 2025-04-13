@@ -28,3 +28,4 @@ class Assinatura(db.Model):
             "status": self.status,
             "preco_assinatura": self.preco_assinatura
         }
+

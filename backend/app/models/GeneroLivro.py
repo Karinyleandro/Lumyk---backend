@@ -12,5 +12,3 @@ class GeneroLivro(db.Model):
             "id": self.id,
             "nome": self.nome
         }
-
-

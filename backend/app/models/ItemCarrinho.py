@@ -1,9 +1,10 @@
+import uuid
 from app.db.database import db
 
 class ItemCarrinho(db.Model):
     __tablename__ = 'ItemCarrinho'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 
     id_carrinho = db.Column(
         db.Integer,

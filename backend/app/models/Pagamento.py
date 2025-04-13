@@ -1,9 +1,10 @@
+import uuid
 from app.db.database import db
 
 class Pagamento(db.Model):
     __tablename__ = 'Pagamento'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     forma_pagamento = db.Column(db.String(40), nullable=False)
 
     def to_dict(self):

@@ -1,9 +1,10 @@
+import uuid
 from app.db.database import db
 
 class Pedido(db.Model):
     __tablename__ = 'Pedido'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 
     id_usuario = db.Column(
         db.Integer,

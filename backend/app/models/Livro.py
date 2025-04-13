@@ -1,9 +1,10 @@
+import uuid
 from app.db.database import db
 
 class Livro(db.Model):
     __tablename__ = 'Livro'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 
     id_genero = db.Column(
         db.Integer,

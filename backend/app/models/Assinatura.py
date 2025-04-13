@@ -1,9 +1,10 @@
+import uuid
 from app.db.database import db
 
 class Assinatura(db.Model):
     __tablename__ = 'Assinatura'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 
     id_usuario = db.Column(
         db.Integer,
@@ -27,3 +28,4 @@ class Assinatura(db.Model):
             "status": self.status,
             "preco_assinatura": self.preco_assinatura
         }
+

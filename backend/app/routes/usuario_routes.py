@@ -30,7 +30,7 @@ def listar_usuarios():
         } for u in usuarios
     ])
 
-@usuario_bp.route('/usuarios/<int:id>', methods=['PUT'])
+@usuario_bp.route('/usuarios/<string:id>', methods=['PUT'])
 def atualizar_usuario(id):
     data = request.json
     usuario = Usuario.query.get_or_404(id)
@@ -45,7 +45,7 @@ def atualizar_usuario(id):
     db.session.commit()
     return jsonify({'mensagem': 'Usuário atualizado com sucesso!'})
 
-@usuario_bp.route('/usuarios/<int:id>', methods=['DELETE'])
+@usuario_bp.route('/usuarios/<string:id>', methods=['DELETE'])
 def deletar_usuario(id):
     usuario = Usuario.query.get_or_404(id)
     db.session.delete(usuario)

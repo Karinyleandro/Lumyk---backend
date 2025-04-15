@@ -7,10 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../.
 
 from run import create_app
 from app import db
-from app.db.migrations.usuario import Usuario 
-
-
-# python app/db/seeders/seeder.py
+from app.models.Usuario import Usuario 
 
 def seed_usuarios():
     usuarios = [
@@ -27,7 +24,6 @@ def seed_usuarios():
             data_nascimento=date(1998, 12, 10)
         )
     ]
-
     db.session.bulk_save_objects(usuarios)
     db.session.commit()
     print("Usuários inseridos com sucesso!")

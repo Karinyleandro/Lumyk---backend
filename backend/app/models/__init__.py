@@ -1,5 +1,5 @@
 from app.models.Usuario import Usuario
-#from app.models.Estado import Estado
+from app.models.Estado import Estado
 #from app.models.Endereco import Endereco
 #from app.models.Autor import Autor
 #from app.models.GeneroLivro import GeneroLivro

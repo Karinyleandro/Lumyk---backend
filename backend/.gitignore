@@ -1,0 +1,5 @@
+# Ignorando o banco de dados
+app/db/database.db
+
+# Ignorar migrations
+app/migrations/

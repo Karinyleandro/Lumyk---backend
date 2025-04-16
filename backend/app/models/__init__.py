@@ -9,4 +9,4 @@ from app.models.Estado import Estado
 #from app.models.Pagamento import Pagamento
 #from app.models.Pedido import Pedido
 #from app.models.ItemPedido import ItemPedido
-#from app.models.Assinatura import Assinatura
+#from app.models.Assinatura import Assinatur

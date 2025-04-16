@@ -1,5 +1,3 @@
-# Ignorando o banco de dados
-app/db/database.db
+#database.db (banco de dados sqlite)
 
-# Ignorar migrations
-app/migrations/
+/app/db/database.db

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.db.database import db
+from app.db.config import db
 from app.models.Usuario import Usuario
 from datetime import datetime
 

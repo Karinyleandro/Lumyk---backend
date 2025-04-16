@@ -1,5 +1,5 @@
 import uuid
-from app.db.database import db
+from app.db.config import db
 
 class Carrinho(db.Model):
     __tablename__ = 'Carrinho'

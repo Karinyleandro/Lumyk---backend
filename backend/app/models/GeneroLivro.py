@@ -1,5 +1,5 @@
 import uuid
-from app.db.database import db
+from app.db.config import db
 
 class GeneroLivro(db.Model):
     __tablename__ = 'GeneroLivro'

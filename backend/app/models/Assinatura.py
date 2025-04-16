@@ -1,5 +1,5 @@
 import uuid
-from app.db.database import db
+from app.db.config import db
 
 class Assinatura(db.Model):
     __tablename__ = 'Assinatura'
@@ -28,4 +28,3 @@ class Assinatura(db.Model):
             "status": self.status,
             "preco_assinatura": self.preco_assinatura
         }
-

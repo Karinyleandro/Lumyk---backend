@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
-from .db.database import db
+from .db.config import db
 from .routes.usuario_routes import usuario_bp
 from app.models import * 
 import os

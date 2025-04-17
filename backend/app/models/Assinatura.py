@@ -1,5 +1,6 @@
 import uuid
-from app.db.config import db
+from backend.app.db.config import db
+
 
 class Assinatura(db.Model):
     __tablename__ = 'Assinatura'

@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_migrate import Migrate
-from .db.config import db
+from backend.app.db.config import db
 from .routes.usuario_routes import usuario_bp
-from app.models import * 
+from backend.app.models import * 
 import os
 
 migrate = Migrate()

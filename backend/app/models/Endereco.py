@@ -1,5 +1,5 @@
 import uuid 
-from app.db.config import db
+from backend.app.db.config import db
 
 class Endereco(db.Model):
     __tablename__ = 'Endereco'

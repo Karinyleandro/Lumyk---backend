@@ -1,8 +1,9 @@
 from flask import Flask
 from flask_migrate import Migrate
+from flask_restx import Api
 from backend.app.db.config import db
-from .routes.usuario_routes import usuario_bp
-from backend.app.models import * 
+from backend.app.routes.usuario_routes import api as usuario_ns
+from backend.app.models import *
 import os
 
 migrate = Migrate()
@@ -18,6 +19,10 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    app.register_blueprint(usuario_bp)
+    api = Api(app, version='1.0', title='API do app Lumyk', 
+              description='Documentação automática da API com Flask-RESTx',
+              doc='/docs')  
+    
+    api.add_namespace(usuario_ns, path='/usuarios')
 
     return app

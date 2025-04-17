@@ -1,6 +1,6 @@
 # EU COLOQUEI TODO COMITADO PORQUE É SÓ UM EXEMPLO QUE NAO TÁ SEGUINDO 100% COMO DEVE SER CRIADO USUARIO, SE QUISER VER PARA ENTENDER
 
-''' from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource, fields
 from backend.app.db.config import db
 from backend.app.models.Usuario import Usuario
 from datetime import datetime
@@ -65,4 +65,4 @@ class UsuarioDetail(Resource):
         usuario = Usuario.query.get_or_404(id)
         db.session.delete(usuario)
         db.session.commit()
-        return {'mensagem': 'Usuário deletado com sucesso!'} '''
+        return {'mensagem': 'Usuário deletado com sucesso!'} 

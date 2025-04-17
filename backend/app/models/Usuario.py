@@ -16,6 +16,6 @@ class Usuario(db.Model):
             "id": self.id,
             "nome": self.nome,
             "email": self.email,
-            "senha": self.senha,
+            "senha": self.senha,  # nao pode retornar a senha
             "data_nascimento": self.data_nascimento.isoformat()
         }

@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-from flask import Blueprint, request, jsonify
-=======
 # EU COLOQUEI TODO COMITADO PORQUE É SÓ UM EXEMPLO QUE NAO TÁ SEGUINDO 100% COMO DEVE SER CRIADO USUARIO, SE QUISER VER PARA ENTENDER
 
 ''' from flask_restx import Namespace, Resource, fields
->>>>>>> feature/kariny
 from backend.app.db.config import db
 from backend.app.models.Usuario import Usuario
 from datetime import datetime

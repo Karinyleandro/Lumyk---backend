@@ -11,6 +11,9 @@ from backend.app.routes.autor_routes import api as autor
 from backend.app.routes.generoLivro_routes import api as genero
 from backend.app.routes.livro_routes import api as livro
 from backend.app.routes.carrinho_routes import api as carrinho
+from backend.app.routes.pagamento_routes import api as pagamento
+from backend.app.routes.pedido_routes import api as pedido
+from backend.app.routes.assinatura_routes import api as assinatura
 from backend.app.models import *
 from dotenv import load_dotenv
 import os
@@ -72,5 +75,8 @@ def create_app():
     api.add_namespace(genero, path='/generos')
     api.add_namespace(livro, path='/livros')
     api.add_namespace(carrinho, path='/carrinhos')
+    api.add_namespace(pagamento, path='/pagamentos')
+    api.add_namespace(pedido, path='/pedidos')
+    api.add_namespace(assinatura, path='/assinaturas')
     
     return app

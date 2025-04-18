@@ -5,23 +5,22 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from backend.app.middlewares.autorizacao_carrinho import autorizacao_carrinho
 import uuid
 
-def listar_carrinhos(id_usuario):
+def listar_carrinhos():
+    id_usuario = get_jwt_identity()
     carrinhos = Carrinho.query.filter_by(id_usuario=id_usuario).all()
     return [c.to_dict() for c in carrinhos], 200
 
-
 @jwt_required()
-@autorizacao_carrinho
-def buscar_por_id(id_usuario, id_carrinho):
+def buscar_por_id(id_carrinho):
     carrinho = Carrinho.query.get(id_carrinho)
-    if not carrinho or carrinho.id_usuario != id_usuario:
-        return {'mensagem': 'Carrinho não existe ou não pertence a você'}, 404
+    if not carrinho:
+        return {'mensagem': 'Carrinho não encontrado'}, 404
     return carrinho.to_dict(), 200
 
-
 @jwt_required()
-def criar_carrinho(id_usuario, data):
+def criar_carrinho(data):
     try:
+        id_usuario = get_jwt_identity()
         data_criacao_str = data.get('data_criacao')
         data_criacao = datetime.strptime(data_criacao_str, "%Y-%m-%d").date() if data_criacao_str else date.today()
 
@@ -37,14 +36,9 @@ def criar_carrinho(id_usuario, data):
     except Exception as e:
         return {'mensagem': f'Erro ao criar carrinho: {str(e)}'}, 500
 
-
 @jwt_required()
 @autorizacao_carrinho
-def atualizar_carrinho(id_carrinho, id_usuario, data):
-    carrinho = Carrinho.query.get(id_carrinho)
-    if not carrinho or carrinho.id_usuario != id_usuario:
-        return {'mensagem': 'Carrinho não existe ou não pertence a você'}, 404
-
+def atualizar_carrinho(id_carrinho, data, carrinho=None):
     try:
         data_criacao_str = data.get('data_criacao')
         if data_criacao_str:
@@ -56,14 +50,9 @@ def atualizar_carrinho(id_carrinho, id_usuario, data):
     except Exception as e:
         return {'mensagem': f'Erro ao atualizar carrinho: {str(e)}'}, 500
 
-
 @jwt_required()
-@autorizacao_carrinho    
-def deletar_carrinho(id_carrinho, id_usuario):
-    carrinho = Carrinho.query.get(id_carrinho)
-    if not carrinho or carrinho.id_usuario != id_usuario:
-        return {'mensagem': 'Carrinho não existe ou não pertence a você'}, 404
-
+@autorizacao_carrinho
+def deletar_carrinho(id_carrinho, carrinho=None):
     db.session.delete(carrinho)
     db.session.commit()
     return {'mensagem': 'Carrinho deletado com sucesso!'}, 200

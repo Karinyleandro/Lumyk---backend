@@ -5,3 +5,4 @@ from .EnderecoController import *
 from .AutorController import *
 from .GeneroLivroController import *
 from .LivroController import *
+from .CarrinhoController import *

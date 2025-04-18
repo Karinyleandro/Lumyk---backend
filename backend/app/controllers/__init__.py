@@ -6,3 +6,5 @@ from .AutorController import *
 from .GeneroLivroController import *
 from .LivroController import *
 from .CarrinhoController import *
+from .PagamentoController import *
+from .PedidoController import *

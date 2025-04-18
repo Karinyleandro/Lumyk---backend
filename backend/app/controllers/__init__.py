@@ -8,3 +8,4 @@ from .LivroController import *
 from .CarrinhoController import *
 from .PagamentoController import *
 from .PedidoController import *
+from .AssinaturaController import *

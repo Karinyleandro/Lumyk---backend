@@ -25,7 +25,14 @@ def create_app():
 
     basedir = os.path.abspath(os.path.dirname(__file__))
     db_path = os.path.join(basedir, 'db', 'database.db')
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
+
+    # Usa PostgreSQL se a variável DATABASE_URL existir, senão usa SQLite
+    database_url = os.getenv("DATABASE_URL")
+    if database_url:
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     
@@ -36,7 +43,7 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
-    JWTManager(app) 
+    JWTManager(app)  
 
     authorizations = {
     'Bearer Auth': {

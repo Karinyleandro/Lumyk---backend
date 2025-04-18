@@ -17,3 +17,4 @@ def autorizacao_endereco(func):
         return func(id, *args, **kwargs)
 
     return wrapper
+    

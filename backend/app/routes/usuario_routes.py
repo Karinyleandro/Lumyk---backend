@@ -1,53 +1,54 @@
-from flask import Blueprint, request, jsonify
-from backend.app.db.config import db
-from backend.app.models.Usuario import Usuario
-from datetime import datetime
+from flask_restx import Namespace, Resource, fields
+from flask import request
+from backend.app.controllers import UsuarioController
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
-usuario_bp = Blueprint('usuario_bp', __name__)
 
-@usuario_bp.route('/usuarios', methods=['POST'])
-def criar_usuario():
-    data = request.json
-    usuario = Usuario(
-        nome=data['nome'],
-        email=data['email'],
-        senha=data['senha'],
-        data_nascimento=datetime.strptime(data['data_nascimento'], '%Y-%m-%d')
-    )
-    db.session.add(usuario)
-    db.session.commit()
-    return jsonify({'mensagem': 'Usuário criado com sucesso!'}), 201
+api = Namespace('usuarios', description='Operações relacionadas a usuários')
 
-@usuario_bp.route('/usuarios', methods=['GET'])
-def listar_usuarios():
-    usuarios = Usuario.query.all()
-    return jsonify([
-        {
-            'id': u.id,
-            'nome': u.nome,
-            'email': u.email,
-            'data_nascimento': u.data_nascimento.strftime('%Y-%m-%d')
-        } for u in usuarios
-    ])
+usuario_model = api.model('Usuario', {
+    'nome': fields.String(required=True),
+    'email': fields.String(required=True),
+    'senha': fields.String(required=True),
+    'data_nascimento': fields.String(required=True, description='Formato: YYYY-MM-DD')
+})
 
-@usuario_bp.route('/usuarios/<string:id>', methods=['PUT'])
-def atualizar_usuario(id):
-    data = request.json
-    usuario = Usuario.query.get_or_404(id)
+# Exemplo de ativação do POST, caso queira depois
+# @api.expect(usuario_model)
+# @api.doc(description="Criar novo usuário")
+# def post(self):
+#     data = request.json
+#     return UsuarioController.criar_usuario(data)
+    
+@api.route('/')
+class ListarUsuarios(Resource):
+    @api.doc(description="Listar todos os usuários")
+    def get(self):
+        return UsuarioController.listar_usuarios()
 
-    usuario.nome = data.get('nome', usuario.nome)
-    usuario.email = data.get('email', usuario.email)
-    usuario.senha = data.get('senha', usuario.senha)
+@api.route('/<string:id>')
+class BuscarUsuarioPorId(Resource):
+    @api.doc(description="Buscar usuário por ID")
+    def get(self, id):
+        return UsuarioController.buscar_usuario_por_id(id)
 
-    if 'data_nascimento' in data:
-        usuario.data_nascimento = datetime.strptime(data['data_nascimento'], '%Y-%m-%d')
+@api.route('/<string:id>/atualizar')
+class AtualizarUsuario(Resource):
+    @api.expect(usuario_model)
+    @api.doc(description="Atualizar um usuário por ID")
+    @jwt_required()
+    def put(self, id):
+        usuario_id_token = get_jwt_identity()
+        if usuario_id_token != id:
+            return {'mensagem': 'Ação não autorizada!'}, 403
+        return UsuarioController.atualizar_usuario(id, request.json)
 
-    db.session.commit()
-    return jsonify({'mensagem': 'Usuário atualizado com sucesso!'})
-
-@usuario_bp.route('/usuarios/<string:id>', methods=['DELETE'])
-def deletar_usuario(id):
-    usuario = Usuario.query.get_or_404(id)
-    db.session.delete(usuario)
-    db.session.commit()
-    return jsonify({'mensagem': 'Usuário deletado com sucesso!'})
+@api.route('/<string:id>/deletar')
+class DeletarUsuario(Resource):
+    @api.doc(description="Deletar um usuário por ID")
+    @jwt_required()
+    def delete(self, id):
+        usuario_id_token = get_jwt_identity()
+        if usuario_id_token != id:
+            return {'mensagem': 'Ação não autorizada!'}, 403
+        return UsuarioController.deletar_usuario(id)

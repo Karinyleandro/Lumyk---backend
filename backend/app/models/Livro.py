@@ -8,13 +8,13 @@ class Livro(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 
     id_genero = db.Column(
-        db.Integer,
+        db.String(36),
         db.ForeignKey('GeneroLivro.id', ondelete='CASCADE', name='fk_livro_genero'),
         nullable=False
     )
 
     id_autor = db.Column(
-        db.Integer,
+        db.String(36),
         db.ForeignKey('Autor.id', ondelete='CASCADE', name='fk_livro_autor'),
         nullable=False
     )
@@ -49,6 +49,8 @@ class Livro(db.Model):
             } if self.genero else None,
             "autor": {
                 "id": self.autor.id,
-                "nome": self.autor.nome
+                "nome": self.autor.nome,
+                "biografia": self.autor.biografia,
+                "foto": self.autor.foto
             } if self.autor else None
         }

@@ -23,10 +23,12 @@ class AutorList(Resource):
 
     @jwt_required()
     @api.expect(autor_model)
+    @api.marshal_with(autor_response)  
     @api.response(201, 'Autor criado com sucesso!')
     def post(self):
         data = request.get_json()
         return AutorController.criar_autor(data)
+
 
 @api.route('/<string:id>')
 @api.param('id', 'ID do autor')

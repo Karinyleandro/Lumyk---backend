@@ -7,9 +7,10 @@ from flask_jwt_extended import jwt_required
 api = Namespace('livros', description='Operações relacionadas a Livros')
 
 # Models de relacionamento
-autor_model = api.model('Autor', {
-    'id': fields.String(description='ID do Autor'),
-    'nome': fields.String(description='Nome do Autor'),
+autor_model = api.model('AutorInput', {
+    'nome': fields.String(required=True, description='Nome do Autor'),
+    'biografia': fields.String(required=True, description='Biografia do Autor'),
+    'foto': fields.String(required=True, description='URL da foto do Autor')
 })
 
 genero_model = api.model('Genero', {
@@ -51,14 +52,12 @@ livro_response = api.model('LivroResponse', {
 class LivroList(Resource):
     @api.marshal_list_with(livro_response)
     def get(self):
-        """Listar todos os livros"""
         return LivroController.listar_livros()[0]
 
     @jwt_required()
     @api.expect(livro_model)
     @api.response(201, 'Livro criado com sucesso!')
     def post(self):
-        """Criar um novo livro"""
         data = request.get_json()
         return LivroController.criar_livro(data)
 
@@ -67,7 +66,6 @@ class LivroList(Resource):
 class LivroResource(Resource):
     @api.marshal_with(livro_response)
     def get(self, id):
-        """Buscar um livro por ID"""
         return LivroController.buscar_livro_por_id(id)[0]
 
     @jwt_required()
@@ -75,7 +73,6 @@ class LivroResource(Resource):
     @api.expect(livro_model)
     @api.response(200, 'Livro atualizado com sucesso!')
     def put(self, id):
-        """Atualizar um livro"""
         data = request.get_json()
         return LivroController.atualizar_livro(id, data)
 
@@ -83,5 +80,4 @@ class LivroResource(Resource):
     @autorizacao_livro
     @api.response(200, 'Livro deletado com sucesso!')
     def delete(self, id):
-        """Deletar um livro"""
         return LivroController.deletar_livro(id)

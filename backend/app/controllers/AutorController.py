@@ -23,7 +23,7 @@ def criar_autor(data):
     )
     db.session.add(novo_autor)
     db.session.commit()
-    return {'mensagem': 'Autor criado com sucesso!', 'autor': novo_autor.to_dict()}, 201
+    return novo_autor.to_dict(), 201
 
 
 def atualizar_autor(id, data):

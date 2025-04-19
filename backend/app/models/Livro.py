@@ -26,6 +26,10 @@ class Livro(db.Model):
     formato = db.Column(db.String(40), nullable=False)
     tipo = db.Column(db.String(40), nullable=False)
     titulo = db.Column(db.String(100), nullable=False)
+    
+     # Relacionamentos
+    genero = db.relationship('GeneroLivro', backref=db.backref('livros', cascade='all, delete-orphan'))
+    autor = db.relationship('Autor', backref=db.backref('livros', cascade='all, delete-orphan'))
 
     def to_dict(self):
         return {
@@ -38,5 +42,13 @@ class Livro(db.Model):
             "preco": self.preco,
             "formato": self.formato,
             "tipo": self.tipo,
-            "titulo": self.titulo
+            "titulo": self.titulo,
+            "genero": {
+                "id": self.genero.id,
+                "nome": self.genero.nome
+            } if self.genero else None,
+            "autor": {
+                "id": self.autor.id,
+                "nome": self.autor.nome
+            } if self.autor else None
         }

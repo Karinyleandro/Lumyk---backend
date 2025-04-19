@@ -1,13 +1,12 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
 from backend.app.controllers import EnderecoController
-from backend.app.models.Endereco import Endereco
+from backend.app.middlewares.autorizacao_endereco import autorizacao_endereco
 
 api = Namespace('enderecos', description='Operações relacionadas a Endereços')
 
 endereco_model = api.model('Endereco', {
-    'id_usuario': fields.String(required=True, description='ID do Usuário'),
     'id_estado': fields.String(required=True, description='ID do Estado'),
     'numero': fields.Integer(required=True, description='Número'),
     'bairro': fields.String(required=True, description='Bairro'),
@@ -15,13 +14,14 @@ endereco_model = api.model('Endereco', {
 })
 
 endereco_response = api.model('EnderecoResponse', {
-    'id': fields.String(required=True, description='ID do Endereço'),
-    'id_usuario': fields.String(required=True, description='ID do Usuário'),
-    'id_estado': fields.String(required=True, description='ID do Estado'),
-    'numero': fields.Integer(required=True, description='Número'),
-    'bairro': fields.String(required=True, description='Bairro'),
-    'rua': fields.String(required=True, description='Rua'),
+    'id': fields.String(description='ID do Endereço'),
+    'id_usuario': fields.String(description='ID do Usuário'),
+    'id_estado': fields.String(description='ID do Estado'),
+    'numero': fields.Integer(description='Número'),
+    'bairro': fields.String(description='Bairro'),
+    'rua': fields.String(description='Rua'),
 })
+
 
 @api.route('/')
 class EnderecoList(Resource):
@@ -37,8 +37,9 @@ class EnderecoList(Resource):
         data = request.get_json()
         return EnderecoController.criar_endereco(data)
 
+
 @api.route('/<string:id>')
-@api.param('id', 'ID do endereço')
+@api.param('id', 'ID do Endereço')
 class EnderecoResource(Resource):
     @api.marshal_with(endereco_response)
     def get(self, id):
@@ -47,19 +48,13 @@ class EnderecoResource(Resource):
     @api.expect(endereco_model)
     @api.doc(security='Bearer Auth')
     @jwt_required()
-    @api.response(200, 'Endereço atualizado com sucesso!')
-    def put(self, id):
-        endereco = Endereco.query.get_or_404(id)
-        if endereco.id_usuario != get_jwt_identity():
-            return {'mensagem': 'Você não tem permissão para alterar este endereço.'}, 403
+    @autorizacao_endereco
+    def put(self, id, endereco):
         data = request.get_json()
-        return EnderecoController.atualizar_endereco(id, data)
+        return EnderecoController.atualizar_endereco(endereco, data)
 
     @api.doc(security='Bearer Auth')
     @jwt_required()
-    @api.response(200, 'Endereço deletado com sucesso!')
-    def delete(self, id):
-        endereco = Endereco.query.get_or_404(id)
-        if endereco.id_usuario != get_jwt_identity():
-            return {'mensagem': 'Você não tem permissão para deletar este endereço.'}, 403
-        return EnderecoController.deletar_endereco(id)
+    @autorizacao_endereco
+    def delete(self, id, endereco):
+        return EnderecoController.deletar_endereco(endereco)

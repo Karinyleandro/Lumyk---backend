@@ -4,7 +4,7 @@ from flask_restx import Api
 from flask_jwt_extended import JWTManager 
 from backend.app.db.config import db
 from backend.app.routes.usuario_routes import api as usuario
-from backend.app.routes.authUsuario_routes import api as auth
+from backend.app.routes.authUsuario_routes import api as Auth
 from backend.app.routes.estado_routes import api as estados
 from backend.app.routes.endereco_routes import api as endereco
 from backend.app.routes.autor_routes import api as autor
@@ -14,6 +14,8 @@ from backend.app.routes.carrinho_routes import api as carrinho
 from backend.app.routes.pagamento_routes import api as pagamento
 from backend.app.routes.pedido_routes import api as pedido
 from backend.app.routes.assinatura_routes import api as assinatura
+from backend.app.routes.itemCarrinho_routes import api as itemCarrinho
+from backend.app.routes.itemPedido_routes import api as itemPedido
 from backend.app.models import *
 from dotenv import load_dotenv
 import os
@@ -67,7 +69,7 @@ def create_app():
         security='Bearer Auth'
     )
 
-    api.add_namespace(auth, path='/auth')
+    api.add_namespace(Auth, path='/auth')
     api.add_namespace(usuario, path='/usuarios')
     api.add_namespace(estados, path='/estados')
     api.add_namespace(endereco, path='/enderecos')
@@ -78,5 +80,7 @@ def create_app():
     api.add_namespace(pagamento, path='/pagamentos')
     api.add_namespace(pedido, path='/pedidos')
     api.add_namespace(assinatura, path='/assinaturas')
+    api.add_namespace(itemCarrinho, path='/item-carrinho')
+    api.add_namespace(itemPedido, path='/item-pedido')
     
     return app

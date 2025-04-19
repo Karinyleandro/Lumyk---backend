@@ -9,3 +9,5 @@ from .CarrinhoController import *
 from .PagamentoController import *
 from .PedidoController import *
 from .AssinaturaController import *
+from .ItemCarrinhoController import *
+from .ItemCarrinhoController import *

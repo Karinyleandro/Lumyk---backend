@@ -22,12 +22,26 @@ class Endereco(db.Model):
     numero = db.Column(db.Integer, nullable=False)
     bairro = db.Column(db.String(40), nullable=False)
     rua = db.Column(db.String(100), nullable=False)
+    
+     # Relacionamentos
+    usuario = db.relationship('Usuario', backref='enderecos', lazy=True)
+    estado = db.relationship('Estado', backref='enderecos', lazy=True)
 
     def to_dict(self):
         return {
             "id": self.id,
             "id_usuario": self.id_usuario,
+            "usuario": {
+                "id": self.usuario.id,
+                "nome": self.usuario.nome
+            } if self.usuario else None,
+
             "id_estado": self.id_estado,
+            "estado": {
+                "id": self.estado.id,
+                "nome": self.estado.nome
+            } if self.estado else None,
+
             "numero": self.numero,
             "bairro": self.bairro,
             "rua": self.rua

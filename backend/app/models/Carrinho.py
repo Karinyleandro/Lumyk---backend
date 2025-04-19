@@ -14,10 +14,17 @@ class Carrinho(db.Model):
     )
 
     data_criacao = db.Column(db.Date, nullable=False)
+    
+    # Relacionamento com Usuario
+    usuario = db.relationship('Usuario', backref=db.backref('carrinhos', cascade='all, delete-orphan'))
 
     def to_dict(self):
         return {
             "id": self.id,
             "id_usuario": self.id_usuario,
-            "data_criacao": self.data_criacao.isoformat()
+            "data_criacao": self.data_criacao.isoformat(),
+            "usuario": {
+                "id": self.usuario.id,
+                "nome": self.usuario.nome
+            } if self.usuario else None
         }

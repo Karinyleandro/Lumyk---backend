@@ -6,17 +6,36 @@ from backend.app.middlewares.autorizacao_pedido import autorizacao_pedido
 
 api = Namespace('pedidos', description='Operações relacionadas a pedidos')
 
+usuario_model = api.model('UsuarioResumo', {
+    'id': fields.String,
+    'nome': fields.String,
+})
+
+endereco_model = api.model('EnderecoResumo', {
+    'id': fields.String,
+    'rua': fields.String,
+    'cidade': fields.String,
+})
+
+pagamento_model = api.model('PagamentoResumo', {
+    'id': fields.String,
+    'forma_pagamento': fields.String,
+})
+
 pedido_model = api.model('Pedido', {
     'id_endereco': fields.String(required=True),
     'id_pagamento': fields.String(required=False),
     'total': fields.Float(required=True),
-    'data_compra': fields.String(required=True, description='Data no formato YYYY-MM-DD'),
+    'data_compra': fields.String(required=True),
     'taxa_frete': fields.Float(required=True),
 })
 
-pedido_response = api.clone('PedidoResponse', pedido_model, {
-    'id': fields.String(required=True),
-    'id_usuario': fields.String(required=True)
+pedido_response = api.inherit('PedidoResponse', pedido_model, {
+    'id': fields.String,
+    'id_usuario': fields.String,
+    'usuario': fields.Nested(usuario_model, allow_null=True),
+    'endereco': fields.Nested(endereco_model, allow_null=True),
+    'pagamento': fields.Nested(pagamento_model, allow_null=True),
 })
 
 @api.route('/')

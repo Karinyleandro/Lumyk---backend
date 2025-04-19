@@ -1,5 +1,6 @@
 import uuid
 from backend.app.db.config import db
+from sqlalchemy.orm import relationship
 
 
 class Assinatura(db.Model):
@@ -19,11 +20,18 @@ class Assinatura(db.Model):
     data_fim = db.Column(db.Date, nullable=False)
     status = db.Column(db.String(40), nullable=False)
     preco_assinatura = db.Column(db.Float, nullable=False)
+    
+    # Relacionamento com Usuario
+    usuario = relationship('Usuario', backref='assinaturas')
 
     def to_dict(self):
         return {
             "id": self.id,
             "id_usuario": self.id_usuario,
+            "usuario": {
+                "id": self.usuario.id,
+                "nome": self.usuario.nome
+            } if self.usuario else None,
             "tipo_assinatura": self.tipo_assinatura,
             "data_inicio": self.data_inicio.isoformat(),
             "data_fim": self.data_fim.isoformat(),

@@ -8,20 +8,30 @@ class ItemCarrinho(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 
     id_carrinho = db.Column(
-        db.Integer,
+        db.String(36),
         db.ForeignKey('Carrinho.id', ondelete='CASCADE', name='fk_itemcarrinho_carrinho'),
         nullable=False
     )
 
     id_livro = db.Column(
-        db.Integer,
+        db.String(36),
         db.ForeignKey('Livro.id', ondelete='CASCADE', name='fk_itemcarrinho_livro'),
         nullable=False
     )
+    
+    #relacionamentos
+    carrinho = db.relationship('Carrinho', backref=db.backref('itens', cascade='all, delete-orphan'))
+    livro = db.relationship('Livro')
 
-    def to_dict(self):
-        return {
+    def to_dict(self, incluir_detalhes=False):
+        base = {
             "id": self.id,
             "id_carrinho": self.id_carrinho,
             "id_livro": self.id_livro
         }
+
+        if incluir_detalhes:
+            base["livro"] = self.livro.to_dict() if self.livro else None
+            base["carrinho"] = self.carrinho.to_dict() if self.carrinho else None
+
+        return base

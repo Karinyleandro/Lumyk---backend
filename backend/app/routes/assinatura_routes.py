@@ -1,13 +1,12 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
 from backend.app.controllers import AssinaturaController
 from backend.app.middlewares.autorizacao_assinatura import autorizacao_assinatura
 
 api = Namespace('assinaturas', description='Operações com assinaturas')
 
 assinatura_model = api.model('Assinatura', {
-    'id_usuario': fields.String(required=True),
     'tipo_assinatura': fields.String(required=True),
     'data_inicio': fields.String(required=True, description='Formato: YYYY-MM-DD'),
     'data_fim': fields.String(required=True),
@@ -25,16 +24,14 @@ class AssinaturaList(Resource):
     @jwt_required()
     @api.marshal_list_with(assinatura_response)
     def get(self):
-        id_usuario = get_jwt_identity()
-        return AssinaturaController.listar_assinaturas(id_usuario)[0]
+        return AssinaturaController.listar_assinaturas()[0]
 
     @jwt_required()
     @api.expect(assinatura_model)
     @api.response(201, 'Assinatura criada com sucesso!')
     def post(self):
-        id_usuario = get_jwt_identity()
         data = request.get_json()
-        return AssinaturaController.criar_assinatura(data, id_usuario)
+        return AssinaturaController.criar_assinatura(data)
 
 @api.route('/<string:id_assinatura>')
 @api.param('id_assinatura', 'ID da assinatura')

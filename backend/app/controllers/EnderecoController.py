@@ -1,19 +1,19 @@
+import uuid
 from backend.app.models.Endereco import Endereco
 from backend.app.db.config import db
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from backend.app.middlewares.autorizacao_endereco import autorizacao_endereco
-import uuid
+from flask_jwt_extended import get_jwt_identity
+
 
 def listar_enderecos():
     enderecos = Endereco.query.all()
     return [endereco.to_dict() for endereco in enderecos], 200
 
-@jwt_required()
+
 def buscar_endereco_por_id(id):
     endereco = Endereco.query.get_or_404(id)
     return endereco.to_dict(), 200
 
-@jwt_required()
+
 def criar_endereco(data):
     usuario_id = get_jwt_identity()
 
@@ -25,27 +25,31 @@ def criar_endereco(data):
         bairro=data['bairro'],
         rua=data['rua']
     )
+
     db.session.add(novo_endereco)
     db.session.commit()
-    return {'mensagem': 'Endereço criado com sucesso!', 'endereco': novo_endereco.to_dict()}, 201
 
-@jwt_required()
-@autorizacao_endereco
-def atualizar_endereco(id, data):
-    endereco = Endereco.query.get_or_404(id)
+    return {
+        'mensagem': 'Endereço criado com sucesso!',
+        'endereco': novo_endereco.to_dict()
+    }, 201
 
+
+def atualizar_endereco(endereco, data):
     endereco.id_estado = data.get('id_estado', endereco.id_estado)
     endereco.numero = data.get('numero', endereco.numero)
     endereco.bairro = data.get('bairro', endereco.bairro)
     endereco.rua = data.get('rua', endereco.rua)
 
     db.session.commit()
-    return {'mensagem': 'Endereço atualizado com sucesso!', 'endereco': endereco.to_dict()}, 200
 
-@jwt_required()
-@autorizacao_endereco
-def deletar_endereco(id):
-    endereco = Endereco.query.get_or_404(id)
+    return {
+        'mensagem': 'Endereço atualizado com sucesso!',
+        'endereco': endereco.to_dict()
+    }, 200
+
+
+def deletar_endereco(endereco):
     db.session.delete(endereco)
     db.session.commit()
     return {'mensagem': 'Endereço deletado com sucesso!'}, 200

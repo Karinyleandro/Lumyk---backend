@@ -8,19 +8,22 @@ class ItemPedido(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 
     id_pedido = db.Column(
-        db.Integer,
+        db.String(36),
         db.ForeignKey('Pedido.id', ondelete='CASCADE', name='fk_itempedido_pedido'),
         nullable=False
     )
 
     id_livro = db.Column(
-        db.Integer,
+        db.String(36),
         db.ForeignKey('Livro.id', ondelete='CASCADE', name='fk_itempedido_livro'),
         nullable=False
     )
 
     preco_unitario = db.Column(db.Float, nullable=False)
     quantidade = db.Column(db.Integer, nullable=False)
+    
+    # Relacionamento
+    livro = db.relationship("Livro", backref="itens_pedido", lazy=True)
 
     def to_dict(self):
         return {
@@ -28,5 +31,7 @@ class ItemPedido(db.Model):
             "id_pedido": self.id_pedido,
             "id_livro": self.id_livro,
             "preco_unitario": self.preco_unitario,
-            "quantidade": self.quantidade
+            "quantidade": self.quantidade,
+            "pedido": self.pedido.to_dict() if self.pedido else None,
+            "livro": self.livro.to_dict() if self.livro else None
         }

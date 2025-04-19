@@ -1,5 +1,6 @@
 import uuid
 from backend.app.db.config import db
+from sqlalchemy.orm import relationship
 
 class Pedido(db.Model):
     __tablename__ = 'Pedido'
@@ -26,13 +27,43 @@ class Pedido(db.Model):
     total = db.Column(db.Float, nullable=False)
     data_compra = db.Column(db.Date, nullable=False)
     taxa_frete = db.Column(db.Float, nullable=False)
+    
+    # Relacionamentos
+    usuario = relationship('Usuario', backref='pedidos')
+    endereco = relationship('Endereco', backref='pedidos')
+    pagamento = relationship('Pagamento', backref='pedidos')
+    
+    itens_pedido = relationship(  
+        "ItemPedido",
+        backref="pedido",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+    
 
     def to_dict(self):
         return {
             "id": self.id,
             "id_usuario": self.id_usuario,
+            "usuario": {
+                "id": self.usuario.id,
+                "nome": self.usuario.nome  
+            } if self.usuario else None,
+
             "id_endereco": self.id_endereco,
+            "endereco": {
+                "id": self.endereco.id,
+                "rua": self.endereco.rua,
+                "bairro": self.endereco.bairro,
+                "numero": self.endereco.numero
+            } if self.endereco else None,
+
             "id_pagamento": self.id_pagamento,
+            "pagamento": {
+                "id": self.pagamento.id,
+                "forma_pagamento": self.pagamento.forma_pagamento
+            } if self.pagamento else None,
+
             "total": self.total,
             "data_compra": self.data_compra.isoformat(),
             "taxa_frete": self.taxa_frete

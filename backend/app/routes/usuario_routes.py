@@ -13,7 +13,7 @@ usuario_model = api.model('Usuario', {
     'data_nascimento': fields.String(required=True, description='Formato: YYYY-MM-DD')
 })
 
-# Exemplo de ativação do POST, caso queira depois
+# Exemplo de ativação do POST
 # @api.expect(usuario_model)
 # @api.doc(description="Criar novo usuário")
 # def post(self):

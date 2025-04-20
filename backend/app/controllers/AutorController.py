@@ -12,7 +12,6 @@ def buscar_autor_por_id(id):
     return autor.to_dict(), 200
 
 def criar_autor(data):
-    # você pode deixar isso se quiser validar o usuário logado
     usuario_id = get_jwt_identity()
 
     novo_autor = Autor(

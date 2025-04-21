@@ -2,7 +2,6 @@ import uuid
 from backend.app.models.ItemPedido import ItemPedido
 from backend.app.models.Pedido import Pedido
 from backend.app.models.Livro import Livro
-from datetime import datetime
 from backend.app.db.config import db
 
 class ItemPedidoController:

@@ -6,19 +6,40 @@ from flask_jwt_extended import jwt_required
 
 api = Namespace('livros', description='Operações relacionadas a Livros')
 
-# Models de relacionamento
-autor_model = api.model('AutorInput', {
-    'nome': fields.String(required=True, description='Nome do Autor'),
-    'biografia': fields.String(required=True, description='Biografia do Autor'),
-    'foto': fields.String(required=True, description='URL da foto do Autor')
+# Models compartilhados
+
+autor_model = api.model('AutorResponse', {
+    'id': fields.String(description='ID do Autor'),
+    'nome': fields.String(description='Nome do Autor'),
+    'biografia': fields.String(description='Biografia do Autor'),
+    'foto': fields.String(description='URL da foto do Autor')
 })
 
-genero_model = api.model('Genero', {
+genero_model = api.model('GeneroResponse', {
     'id': fields.String(description='ID do Gênero'),
     'nome': fields.String(description='Nome do Gênero'),
 })
 
-# Model de entrada
+estado_model = api.model('EstadoResponse', {
+    'id': fields.String(description='ID do Estado'),
+    'nome': fields.String(description='Nome do Estado'),
+})
+
+usuario_model = api.model('UsuarioResponse', {
+    'id': fields.String(description='ID do Usuário'),
+    'nome': fields.String(description='Nome do Usuário'),
+})
+
+endereco_model = api.model('EnderecoResponse', {
+    'id': fields.String(description='ID do Endereço'),
+    'id_usuario': fields.String(description='ID do Usuário'),
+    'id_estado': fields.String(description='ID do Estado'),
+    'numero': fields.Integer(description='Número'),
+    'bairro': fields.String(description='Bairro'),
+    'rua': fields.String(description='Rua'),
+})
+
+# Model de entrada (criação e atualização de livros)
 livro_model = api.model('Livro', {
     'id_genero': fields.String(required=True, description='ID do Gênero'),
     'id_autor': fields.String(required=True, description='ID do Autor'),
@@ -29,15 +50,24 @@ livro_model = api.model('Livro', {
     'formato': fields.String(required=True, description='Formato do Livro'),
     'tipo': fields.String(required=True, description='Tipo do Livro'),
     'titulo': fields.String(required=True, description='Título do Livro'),
+    'id_estado': fields.String(description='ID do Estado'),
+    'id_usuario': fields.String(description='ID do Usuário'),
+    'id_endereco': fields.String(description='ID do Endereço')
 })
 
-# Model de resposta
+# Model de resposta (quando retorna o livro com os relacionamentos completos)
 livro_response = api.model('LivroResponse', {
     'id': fields.String(description='ID do Livro'),
     'id_genero': fields.String(description='ID do Gênero'),
     'genero': fields.Nested(genero_model, description='Informações do Gênero'),
     'id_autor': fields.String(description='ID do Autor'),
     'autor': fields.Nested(autor_model, description='Informações do Autor'),
+    'id_estado': fields.String(description='ID do Estado'),
+    'estado': fields.Nested(estado_model, description='Informações do Estado'),
+    'id_usuario': fields.String(description='ID do Usuário'),
+    'usuario': fields.Nested(usuario_model, description='Informações do Usuário'),
+    'id_endereco': fields.String(description='ID do Endereço'),
+    'endereco': fields.Nested(endereco_model, description='Informações do Endereço'),
     'foto': fields.String(description='Foto do Livro'),
     'sinopse': fields.String(description='Sinopse do Livro'),
     'estoque': fields.Integer(description='Quantidade em Estoque'),
@@ -48,6 +78,7 @@ livro_response = api.model('LivroResponse', {
 })
 
 # Rotas
+
 @api.route('/')
 class LivroList(Resource):
     @api.marshal_list_with(livro_response)

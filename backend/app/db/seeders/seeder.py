@@ -5,6 +5,7 @@ from backend.app import db
 from backend.app.models.Autor import Autor
 from backend.app.models.GeneroLivro import GeneroLivro
 from backend.app.models.Livro import Livro
+from backend.app.models.Estado import Estado
 from run import create_app
 
 '''
@@ -78,6 +79,15 @@ def seed_livros():
     db.session.commit()
     print("Livros inseridos com sucesso!")
 
+def seed_estados():
+    estados = carregar_json('estados.json')
+    
+    for estado in estados:
+        novo_estado = Estado(nome=estado['nome'].strip())
+        db.session.add(novo_estado) 
+
+    db.session.commit()
+    print("Estados inseridos com sucesso!")
 
 if __name__ == "__main__":
     app = create_app()
@@ -85,3 +95,4 @@ if __name__ == "__main__":
         seed_autores()
         seed_generos()
         seed_livros()
+        seed_estados()

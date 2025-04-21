@@ -14,7 +14,6 @@ usuario_model = api.model('UsuarioResumo', {
 endereco_model = api.model('EnderecoResumo', {
     'id': fields.String,
     'rua': fields.String,
-    'cidade': fields.String,
 })
 
 pagamento_model = api.model('PagamentoResumo', {

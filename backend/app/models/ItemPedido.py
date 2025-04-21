@@ -4,7 +4,6 @@ from backend.app.db.config import db
 class ItemPedido(db.Model):
     __tablename__ = 'ItemPedido'
 
-    # o id coloquei em string porque tô usando o uuid para gerar um id único ele é dado em: c3c42be5-ca13-4a58-89a1-80d0f3775026
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 
     id_pedido = db.Column(
@@ -21,10 +20,10 @@ class ItemPedido(db.Model):
 
     preco_unitario = db.Column(db.Float, nullable=False)
     quantidade = db.Column(db.Integer, nullable=False)
-    
-    # Relacionamento
-    livro = db.relationship("Livro", backref="itens_pedido", lazy=True)
 
+    pedido = db.relationship("Pedido", backref="itens", lazy="joined")  # inner join real
+    livro = db.relationship("Livro", backref="itens", lazy="joined")    
+    
     def to_dict(self):
         return {
             "id": self.id,
@@ -32,6 +31,11 @@ class ItemPedido(db.Model):
             "id_livro": self.id_livro,
             "preco_unitario": self.preco_unitario,
             "quantidade": self.quantidade,
-            "pedido": self.pedido.to_dict() if self.pedido else None,
+            "pedido": {
+                "id": self.pedido.id,
+                "data_compra": self.pedido.data_compra.isoformat(),
+                "total": self.pedido.total,
+                "taxa_frete": self.pedido.taxa_frete
+            } if self.pedido else None,
             "livro": self.livro.to_dict() if self.livro else None
         }

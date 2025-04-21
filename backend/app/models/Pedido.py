@@ -33,21 +33,22 @@ class Pedido(db.Model):
     endereco = relationship('Endereco', backref='pedidos')
     pagamento = relationship('Pagamento', backref='pedidos')
     
-    itens_pedido = relationship(  
+    
+    #item_pedido
+    '''itens_pedido = relationship(  
         "ItemPedido",
-        backref="pedido",
+        backref="pedido_relacionado",
         cascade="all, delete-orphan",
         passive_deletes=True
-    )
+    )'''
     
-
     def to_dict(self):
         return {
             "id": self.id,
             "id_usuario": self.id_usuario,
             "usuario": {
                 "id": self.usuario.id,
-                "nome": self.usuario.nome  
+                "nome": self.usuario.nome
             } if self.usuario else None,
 
             "id_endereco": self.id_endereco,
@@ -60,11 +61,14 @@ class Pedido(db.Model):
 
             "id_pagamento": self.id_pagamento,
             "pagamento": {
-                "id": self.pagamento.id,
-                "forma_pagamento": self.pagamento.forma_pagamento
+                "id": self.pagamento.id if self.pagamento else None,
+                "forma_pagamento": self.pagamento.forma_pagamento if self.pagamento else None
             } if self.pagamento else None,
 
             "total": self.total,
             "data_compra": self.data_compra.isoformat(),
-            "taxa_frete": self.taxa_frete
+            "taxa_frete": self.taxa_frete,
+
+            # Itens do pedido - Aqui estamos incluindo o `to_dict` de cada `ItemPedido`
+            #"itens_pedido": [item.to_dict() for item in self.itens_pedido] if self.itens_pedido else []
         }

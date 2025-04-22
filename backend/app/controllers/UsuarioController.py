@@ -61,13 +61,11 @@ def atualizar_usuario(id, data):
     senha = data.get('senha')
     data_nascimento_str = data.get('data_nascimento')
 
-    # Validação de nome único (ignorando o próprio usuário)
     if nome and nome != usuario.nome:
         if Usuario.query.filter(Usuario.nome == nome, Usuario.id != usuario.id).first():
             return {'mensagem': 'O nome já está em uso.'}, 400
         usuario.nome = nome
 
-    # Validação de email único (ignorando o próprio usuário)
     if email and email != usuario.email:
         if Usuario.query.filter(Usuario.email == email, Usuario.id != usuario.id).first():
             return {'mensagem': 'O email já está em uso.'}, 400
@@ -77,7 +75,6 @@ def atualizar_usuario(id, data):
     if senha:
         usuario.senha = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-    # Atualização de data de nascimento (se informada)
     if data_nascimento_str:
         try:
             data_nascimento = datetime.strptime(data_nascimento_str, '%Y-%m-%d')

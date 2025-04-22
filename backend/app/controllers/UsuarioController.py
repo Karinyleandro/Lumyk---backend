@@ -51,6 +51,7 @@ def buscar_usuario_por_id(id):
     db.session.commit()
     return {'mensagem': 'Usuário criado com sucesso!'}, 201 '''
 
+
 @jwt_required()
 def atualizar_usuario(id, data):
     usuario = Usuario.query.get_or_404(id)
@@ -79,12 +80,22 @@ def atualizar_usuario(id, data):
     # Atualização de data de nascimento (se informada)
     if data_nascimento_str:
         try:
-            usuario.data_nascimento = datetime.strptime(data_nascimento_str, '%Y-%m-%d')
+            data_nascimento = datetime.strptime(data_nascimento_str, '%Y-%m-%d')
         except ValueError:
             return {'mensagem': 'Data de nascimento inválida. Use o formato YYYY-MM-DD.'}, 400
 
+        # Validação de idade mínima (14 anos)
+        hoje = datetime.today()
+        idade_minima = hoje.replace(year=hoje.year - 14)
+
+        if data_nascimento > idade_minima:
+            return {'mensagem': 'É necessário ter pelo menos 14 anos para atualizar os dados.'}, 400
+
+        usuario.data_nascimento = data_nascimento
+
     db.session.commit()
     return {'mensagem': 'Usuário atualizado com sucesso!'}, 200
+
 
 @jwt_required()
 def deletar_usuario(id):

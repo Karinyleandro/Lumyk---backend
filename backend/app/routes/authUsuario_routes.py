@@ -6,12 +6,13 @@ api = Namespace('auth', description='Gerenciamento de autenticação (registro e
 
 # Modelo para a entrada do registro
 registro_input = api.model('RegistroInput', {
-    'nome': fields.String(required=True, description='Nome do usuário'),
-    'email': fields.String(required=True, description='Email do usuário'),
-    'senha': fields.String(required=True, description='Senha do usuário'),
+    'nome': fields.String(required=True, description='Nome do usuário', example='João Silva'),
+    'email': fields.String(required=True, description='Email do usuário', example='joao@email.com'),
+    'senha': fields.String(required=True, description='Senha do usuário (6 a 8 caracteres)', example='senha12'),
     'data_nascimento': fields.String(
         required=True,
-        description='Data de nascimento no formato YYYY-MM-DD'
+        description='Data de nascimento no formato YYYY-MM-DD (usuário deve ter pelo menos 14 anos)',
+        example='2009-04-22' 
     )
 })
 

@@ -31,7 +31,7 @@ def seed_autores():
         novo_autor = Autor(
             nome=autor['nome'],
             biografia=autor['biografia'],
-            foto=f"/static/autor/{autor['foto']}" if autor['foto'] else None
+            foto=autor['foto'] if autor['foto'] else None
         )
         db.session.add(novo_autor)
 

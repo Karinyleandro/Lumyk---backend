@@ -35,6 +35,11 @@ Acesse no navegador:
 http://127.0.0.1:5000/docs
 ```
 
+Para rodar as migrations e criar o banco de dados:
+```bash
+ Flask app manage.py do upgrade directory backend/app/migrations
+```
+
 Executar Seeders (Inserir Dados Iniciais)
 Para popular as tabelas com os dados principais:
 ```bash

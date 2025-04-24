@@ -44,5 +44,7 @@ PYTHONPATH=backend python -m backend.app.db.seeders.seeder
 Se tudo ocorrer bem, você verá:
 
   Autores inseridos com sucesso!
+  
   Gêneros inseridos com sucesso!
+  
   Livros inseridos com sucesso!

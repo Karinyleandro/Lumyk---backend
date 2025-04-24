@@ -46,11 +46,6 @@ Para popular as tabelas com os dados principais:
 PYTHONPATH=backend python -m backend.app.db.seeders.seeder
 ```
 
-OBS: CASO DÊ ALGUM ERRO POR FALTA DE ALGUMA INSTALAÇÃO, RODE:
-```bash
-pip install Flask==3.1.0 Flask-RESTX==1.1.0 python-dotenv==1.0.0
-```
-
 Se tudo ocorrer bem, você verá:
 
   Autores inseridos com sucesso!
@@ -58,3 +53,8 @@ Se tudo ocorrer bem, você verá:
   Gêneros inseridos com sucesso!
   
   Livros inseridos com sucesso!
+
+ OBS: CASO DÊ ALGUM ERRO POR FALTA DE ALGUMA INSTALAÇÃO, RODE:
+```bash
+pip install Flask==3.1.0 Flask-RESTX==1.1.0 python-dotenv==1.0.0
+```

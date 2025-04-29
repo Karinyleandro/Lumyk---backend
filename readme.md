@@ -58,6 +58,10 @@ Se tudo ocorrer bem, você verá:
 ```bash
 pip install Flask==3.1.0 Flask-RESTX==1.1.0 python-dotenv==1.0.0
 ```
+ou, se preciso, modifique a versão para:
+```` bash
+pip install flask-restx==1.3.0
+````
 ESSE PACOTE DE CIMA RESOLVE ESSE ERRO DE BAIXO:
 
 ```bash

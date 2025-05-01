@@ -37,7 +37,7 @@ http://127.0.0.1:5000/docs
 
 Para rodar as migrations e criar o banco de dados:
 ```bash
- Flask app manage.py do upgrade directory backend/app/migrations
+flask --app manage.py db upgrade --directory backend/app/migrations
 ```
 
 Executar Seeders (Inserir Dados Iniciais)
@@ -105,3 +105,9 @@ Traceback (most recent call last):
     import bcrypt
 ModuleNotFoundError: No module named 'bcrypt'
 ```
+
+OBSERVAÇÃO: configure a váriavel de ambiente no arquivo .env que se encontra no diretório principal do backend.
+
+- Exemplo de chave secreta usada para geração e validação de tokens JWT:
+
+JWT_SECRET=sua_chave_super_secreta_aqui

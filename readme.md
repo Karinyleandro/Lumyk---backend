@@ -106,8 +106,10 @@ Traceback (most recent call last):
 ModuleNotFoundError: No module named 'bcrypt'
 ```
 
+
 OBSERVAÇÃO: configure a váriavel de ambiente no arquivo .env que se encontra no diretório principal do backend.
 
-- Exemplo de chave secreta usada para geração e validação de tokens JWT:
-
-JWT_SECRET=sua_chave_super_secreta_aqui
+   - Exemplo de chave secreta usada para geração e validação de tokens JWT:
+ ```
+   JWT_SECRET=sua_chave_super_secreta_aqui
+```

@@ -14,6 +14,7 @@ Depois, acesse a pasta do projeto:
   ```bash
   cd Lumyk---backend
   ```
+---
 
 📦 Instalação
 
@@ -106,7 +107,7 @@ Traceback (most recent call last):
 ModuleNotFoundError: No module named 'bcrypt'
 ```
 
-
+---
 OBSERVAÇÃO: configure a váriavel de ambiente no arquivo .env que se encontra no diretório principal do backend.
 
    - Exemplo de chave secreta usada para geração e validação de tokens JWT:

@@ -120,6 +120,8 @@ OBSERVAÇÃO: configure a váriavel de ambiente no arquivo .env que se encontra 
 Configuração do arquivo .env:
 Além da senha configurada como recomendado acima, será preciso que você configure os arquivos para smtp:
 Se precisar que eu informe a que eu usei só entrar em contato
+
+```
 #smtp
 MAIL_SERVER=smtp.gmail.com
 MAIL_PORT=587
@@ -127,7 +129,7 @@ MAIL_USE_TLS=True
 MAIL_USERNAME=lumykbooks@gmail.com
 MAIL_PASSWORD=#senhadoapp
 MAIL_DEFAULT_SENDER=lumykbooks@gmail.com
-
+```
 
 ---
 PARA RODAR A RECUPERAÇÃO DE SENHA, É PRECISO INSTALAR:

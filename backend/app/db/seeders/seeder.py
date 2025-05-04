@@ -83,11 +83,18 @@ def seed_estados():
     estados = carregar_json('estados.json')
     
     for estado in estados:
-        novo_estado = Estado(nome=estado['nome'].strip())
-        db.session.add(novo_estado) 
+        nome = estado['nome'].strip() 
+        taxa_frete = estado['taxa_frete']
+
+        if not nome or taxa_frete is None:
+            print(f"Erro no estado: {estado}, nome ou frete faltando!")
+            continue 
+        novo_estado = Estado(nome=nome, taxa_frete=taxa_frete)
+        db.session.add(novo_estado)
 
     db.session.commit()
     print("Estados inseridos com sucesso!")
+
 
 if __name__ == "__main__":
     app = create_app()

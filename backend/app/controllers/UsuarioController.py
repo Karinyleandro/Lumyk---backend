@@ -1,66 +1,88 @@
+import random
+import string
+import os
+import traceback
+import logging
+import datetime
+import bcrypt
+from dotenv import load_dotenv
+from flask import current_app
+from flask_mail import Message
+from email_validator import validate_email, EmailNotValidError
 from backend.app.models.Usuario import Usuario
 from backend.app.db.config import db
-from datetime import datetime
-from flask_jwt_extended import jwt_required
-import bcrypt
-import uuid
 
-def listar_usuarios():
-    usuarios = Usuario.query.all()
-    return [{
-        'id': usuario.id,
-        'nome': usuario.nome,
-        'email': usuario.email,
-        'senha': usuario.senha,
-        'data_nascimento': usuario.data_nascimento.strftime('%Y-%m-%d') if usuario.data_nascimento else None
-    } for usuario in usuarios], 200
+load_dotenv()
 
-def buscar_usuario_por_id(id):
-    usuario = Usuario.query.get_or_404(id)
-    return {
-        'id': usuario.id,
-        'nome': usuario.nome,
-        'email': usuario.email,
-        'data_nascimento': usuario.data_nascimento.strftime('%Y-%m-%d') if usuario.data_nascimento else None
-    }, 200
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-''' def criar_usuario(data):
-    nome = data.get('nome')
-    email = data.get('email')
+# Dicionário para armazenar códigos de recuperação ativos {email: (codigo, data_expiracao)}
+codigos_ativos = {}
 
-    if Usuario.query.filter_by(nome=nome).first():
-        return {'mensagem': 'O nome já está em uso.'}, 400
+# Função para gerar um código aleatório de 6 caracteres
+def gerar_codigo(tamanho=6):
+    caracteres = string.ascii_uppercase + string.digits
+    return ''.join(random.choices(caracteres, k=tamanho))
 
-    if Usuario.query.filter_by(email=email).first():
-        return {'mensagem': 'O email já está em uso.'}, 400
+# Função para enviar o e-mail de recuperação
+def enviar_email_recuperacao(email, codigo):
+    from backend.app import mail
+    logger = logging.getLogger(__name__)
 
-    try:
-        data_nascimento = datetime.strptime(data['data_nascimento'], '%Y-%m-%d')
-    except ValueError:
-        return {'mensagem': 'Data de nascimento inválida. Use o formato YYYY-MM-DD.'}, 400
+    print(f"[DEBUG] Enviando e-mail para: {email}")
 
-    novo_usuario = Usuario(
-        id=str(uuid.uuid4()),
-        nome=nome,
-        email=email,
-        senha=data['senha'],  # SEM HASH ainda em usuario
-        data_nascimento=data_nascimento
+    mensagem_texto = (
+        f"Use o seguinte código para redefinir sua senha:\n\n{codigo}\n\n"
+        "Este código expira em 1 hora. Não compartilhe com ninguém."
     )
 
-    db.session.add(novo_usuario)
-    db.session.commit()
-    return {'mensagem': 'Usuário criado com sucesso!'}, 201 '''
+    mensagem_html = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; background-color: #A662FF; padding: 20px;">
+            <div style="max-width: 600px; margin: auto; background: #FFFFFF; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h2 style="color: #000000;">Recuperação de Senha</h2>
+                <p style="color: #000000;">Olá,</p>
+                <p style="color: #000000;">Você solicitou a redefinição da sua senha. Use o código abaixo:</p>
+                <div style="background-color: #F0F0F0; color: #A662FF; padding: 15px; border-radius: 5px; font-size: 20px; text-align: center; font-weight: bold;">
+                    {codigo}
+                </div>
+                <p style="color: #000000;">Este código expira em <strong>1 hora</strong>.</p>
+                <p style="color: #FF0000;">Não compartilhe este código com ninguém.</p>
+                <p style="color: #000000;">Se você não solicitou esta recuperação, ignore este e-mail.</p>
+                <br>
+                <p style="color: #000000;">Atenciosamente,<br>Sua equipe</p>
+            </div>
+        </body>
+    </html>
+    """
 
+    msg = Message(
+        subject='Recuperação de Senha',
+        sender=os.getenv('MAIL_DEFAULT_SENDER'),
+        recipients=[email],
+        body=mensagem_texto,
+        html=mensagem_html
+    )
 
-@jwt_required()
-def atualizar_usuario(id, data):
-    usuario = Usuario.query.get_or_404(id)
+    try:
+        with current_app.app_context():
+            mail.send(msg)
+        return True
+    except Exception as e:
+        logger.error(f"Erro ao enviar e-mail: {e}")
+        traceback.print_exc()
+        return False
 
-    nome = data.get('nome')
+# Função para recuperar a senha (gera código e envia)
+def recuperar_senha(data):
     email = data.get('email')
-    senha = data.get('senha')
-    data_nascimento_str = data.get('data_nascimento')
+    try:
+        validate_email(email)
+    except EmailNotValidError as e:
+        return {'mensagem': f'E-mail inválido: {str(e)}'}, 400
 
+<<<<<<< HEAD
     if nome and nome != usuario.nome:
         if Usuario.query.filter(Usuario.nome == nome, Usuario.id != usuario.id).first():
             return {'mensagem': 'O nome já está em uso.'}, 400
@@ -70,33 +92,172 @@ def atualizar_usuario(id, data):
         if Usuario.query.filter(Usuario.email == email, Usuario.id != usuario.id).first():
             return {'mensagem': 'O email já está em uso.'}, 400
         usuario.email = email
+=======
+    usuario = Usuario.query.filter_by(email=email).first()
+    if not usuario:
+        return {'mensagem': 'E-mail não encontrado.'}, 404
 
-    # Atualização de senha (com hash)
-    if senha:
-        usuario.senha = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    codigo = gerar_codigo()
+    expiracao = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+    codigos_ativos[email] = (codigo, expiracao)
+>>>>>>> feature/kariny
 
+    if enviar_email_recuperacao(email, codigo):
+        return {'mensagem': 'E-mail de recuperação enviado com sucesso.'}, 200
+    else:
+        return {'mensagem': 'Erro ao enviar o e-mail de recuperação.'}, 500
+
+<<<<<<< HEAD
     if data_nascimento_str:
         try:
             data_nascimento = datetime.strptime(data_nascimento_str, '%Y-%m-%d')
         except ValueError:
             return {'mensagem': 'Data de nascimento inválida. Use o formato YYYY-MM-DD.'}, 400
+=======
+# Função para atualizar senha usando o código enviado por e-mail
+def atualizar_senha(data):
+    codigo_recebido = data.get('codigo')
+    new_password = data.get('new_password')
+    confirm_password = data.get('confirm_password')
+>>>>>>> feature/kariny
 
-        # Validação de idade mínima (14 anos)
-        hoje = datetime.today()
+    if not codigo_recebido or not new_password or not confirm_password:
+        return {'mensagem': 'Código, nova senha e confirmação são obrigatórios.'}, 400
+
+    if new_password != confirm_password:
+        return {'mensagem': 'As senhas não conferem.'}, 400
+
+    if len(new_password) < 6 or len(new_password) > 8:
+        return {'mensagem': 'A senha deve ter entre 6 e 8 caracteres.'}, 400
+
+    email_encontrado = None
+    for email, (codigo, expiracao) in codigos_ativos.items():
+        if codigo == codigo_recebido:
+            email_encontrado = email
+            break
+
+    if not email_encontrado:
+        return {'mensagem': 'Código inválido.'}, 401
+
+    codigo_armazenado, expiracao = codigos_ativos[email_encontrado]
+
+    if datetime.datetime.utcnow() > expiracao:
+        del codigos_ativos[email_encontrado]
+        return {'mensagem': 'O código expirou.'}, 401
+
+    try:
+        usuario = Usuario.query.filter_by(email=email_encontrado).first()
+        if not usuario:
+            return {'mensagem': 'Usuário não encontrado.'}, 404
+
+        hoje = datetime.datetime.today()
         idade_minima = hoje.replace(year=hoje.year - 14)
 
-        if data_nascimento > idade_minima:
-            return {'mensagem': 'É necessário ter pelo menos 14 anos para atualizar os dados.'}, 400
+        if not usuario.data_nascimento:
+            return {'mensagem': 'Data de nascimento não cadastrada.'}, 400
 
-        usuario.data_nascimento = data_nascimento
+        if isinstance(usuario.data_nascimento, datetime.datetime):
+            data_nasc = usuario.data_nascimento.date()
+        else:
+            data_nasc = usuario.data_nascimento
 
-    db.session.commit()
-    return {'mensagem': 'Usuário atualizado com sucesso!'}, 200
+        if data_nasc > idade_minima.date():
+            return {'mensagem': 'É necessário ter pelo menos 14 anos para atualizar a senha.'}, 400
 
+        usuario.senha = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
+        db.session.commit()
 
-@jwt_required()
+        del codigos_ativos[email_encontrado]
+
+        return {'mensagem': 'Senha atualizada com sucesso.'}, 200
+
+    except Exception as e:
+        logger.error(f'Erro inesperado ao atualizar senha: {str(e)}')
+        return {'mensagem': f'Erro inesperado: {str(e)}'}, 500
+
+# Função para atualizar o usuário
+def atualizar_usuario(id, data):
+    try:
+        usuario = Usuario.query.get(id)
+        if not usuario:
+            return {'mensagem': 'Usuário não encontrado.'}, 404
+
+        usuario.nome = data.get('nome', usuario.nome)
+        usuario.email = data.get('email', usuario.email)
+
+        data_nascimento_str = data.get('data_nascimento')
+        if data_nascimento_str:
+            try:
+                usuario.data_nascimento = datetime.datetime.strptime(data_nascimento_str, '%Y-%m-%d').date()
+            except ValueError:
+                return {'mensagem': 'Formato de data inválido. Use YYYY-MM-DD.'}, 400
+
+        hoje = datetime.date.today()
+        idade_minima = hoje.replace(year=hoje.year - 14)
+
+        if isinstance(usuario.data_nascimento, datetime.datetime):
+            usuario.data_nascimento = usuario.data_nascimento.date()
+
+        if usuario.data_nascimento > idade_minima:
+            return {'mensagem': 'É necessário ter pelo menos 14 anos para se registrar.'}, 400
+
+        nova_senha = data.get('senha')
+        if nova_senha:
+            if len(nova_senha) < 6 or len(nova_senha) > 8:
+                return {'mensagem': 'A senha deve ter entre 6 e 8 caracteres.'}, 400
+            usuario.senha = bcrypt.hashpw(nova_senha.encode(), bcrypt.gensalt()).decode()
+
+        db.session.commit()
+
+        return {'mensagem': 'Usuário atualizado com sucesso.'}, 200
+
+    except Exception as e:
+        logger.error(f'Erro ao atualizar o usuário: {str(e)}')
+        return {'mensagem': f'Erro ao atualizar o usuário: {str(e)}'}, 500
+
+# Função para listar os usuários
+def listar_usuarios():
+    try:
+        usuarios = Usuario.query.all()
+        resultado = [
+            {
+                'id': usuario.id,
+                'nome': usuario.nome,
+                'email': usuario.email,
+                'senha': usuario.senha
+            }
+            for usuario in usuarios
+        ]
+        return resultado, 200
+    except Exception as e:
+        logger.error(f'Ocorreu um erro ao listar os usuários: {str(e)}')
+        return {'mensagem': f'Ocorreu um erro ao listar os usuários: {str(e)}'}, 500
+
+# Função para buscar usuário por ID
+def buscar_usuario_por_id(id):
+    usuario = Usuario.query.get(id)
+    if usuario:
+        return {
+            'id': usuario.id,
+            'nome': usuario.nome,
+            'email': usuario.email,
+            'data_nascimento': str(usuario.data_nascimento)
+        }, 200
+    else:
+        return {'mensagem': 'Usuário não encontrado.'}, 404
+
+# Função para deletar usuário
 def deletar_usuario(id):
-    usuario = Usuario.query.get_or_404(id)
-    db.session.delete(usuario)
-    db.session.commit()
-    return {'mensagem': 'Usuário deletado com sucesso!'}
+    try:
+        usuario = Usuario.query.get(id)
+        if not usuario:
+            return {'mensagem': 'Usuário não encontrado.'}, 404
+
+        db.session.delete(usuario)
+        db.session.commit()
+
+        return {'mensagem': 'Usuário deletado com sucesso.'}, 200
+
+    except Exception as e:
+        logger.error(f'Erro ao deletar usuário: {str(e)}')
+        return {'mensagem': f'Erro ao deletar usuário: {str(e)}'}, 500

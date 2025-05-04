@@ -35,7 +35,7 @@ class ItemPedido(db.Model):
                 "id": self.pedido.id,
                 "data_compra": self.pedido.data_compra.isoformat(),
                 "total": self.pedido.total,
-                "taxa_frete": self.pedido.taxa_frete
+                "taxa_frete": self.pedido.estado.taxa_frete if self.pedido and self.pedido.estado else None
             } if self.pedido else None,
             "livro": self.livro.to_dict() if self.livro else None
         }

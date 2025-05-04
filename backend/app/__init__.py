@@ -16,6 +16,7 @@ from backend.app.routes.pedido_routes import api as pedido
 from backend.app.routes.assinatura_routes import api as assinatura
 from backend.app.routes.itemCarrinho_routes import api as itemCarrinho
 from backend.app.routes.itemPedido_routes import api as itemPedido
+from flask_mail import Mail
 from backend.app.models import *
 from dotenv import load_dotenv
 import os
@@ -24,6 +25,9 @@ import os
 load_dotenv()  
 
 migrate = Migrate()
+# Inicializando o Flask-Mail
+mail = Mail()
+
 
 def create_app():
     app = Flask(__name__)  
@@ -45,10 +49,18 @@ def create_app():
     app.config['JWT_TOKEN_LOCATION'] = ['headers']          
     app.config['JWT_HEADER_NAME'] = 'Authorization'
     app.config['JWT_HEADER_TYPE'] = 'Bearer'
-
+    
+    app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')  # E-mail de envio
+    app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))  # Porta de envio
+    app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True') == 'True'
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')  # Usuário de envio
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Senha do usuário de envio
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'no-reply@seusite.com') 
+    
     db.init_app(app)
     migrate.init_app(app, db)
     JWTManager(app)  
+    mail.init_app(app)  # Inicializa o Flask-Mail para o envio de e-mails
 
     authorizations = {
     'Bearer Auth': {

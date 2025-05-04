@@ -6,12 +6,15 @@ from backend.app.controllers import EstadoController
 api = Namespace('estados', description='Operações relacionadas a Estados')
 
 estado_model = api.model('Estado', {
-    'nome': fields.String(required=True)
+    'nome': fields.String(required=True),
+    'taxa_frete': fields.Float(required=True)  
 })
 
 estado_get = api.model('EstadoResponse', {
     'id': fields.String(required=True),
-    'nome': fields.String(required=True)
+    'nome': fields.String(required=True),
+    'taxa_frete': fields.Float(required=True)  
+    
 })
 
 @api.route('/')
@@ -38,7 +41,6 @@ class EstadoManipular(Resource):
 
     @api.expect(estado_model)
     @api.doc(security='Bearer Auth')
-    @jwt_required()
     @api.response(200, 'Estado atualizado com sucesso!')
     @api.response(400, 'Erro de validação')
     def put(self, id):
@@ -46,8 +48,6 @@ class EstadoManipular(Resource):
         return EstadoController.atualizar_estado(id, data)
 
     @api.doc(security='Bearer Auth')
-    @jwt_required()
     @api.response(200, 'Estado deletado com sucesso!')
     def delete(self, id):
         return EstadoController.deletar_estado(id)
-    

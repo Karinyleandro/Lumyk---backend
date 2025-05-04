@@ -9,30 +9,35 @@ class Pedido(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
 
     id_usuario = db.Column(
-        db.Integer,
+        db.String(36),
         db.ForeignKey('Usuario.id', ondelete='CASCADE', name='fk_pedido_usuario'),
         nullable=False
     )
     id_endereco = db.Column(
-        db.Integer,
+        db.String(36),
         db.ForeignKey('Endereco.id', ondelete='CASCADE', name='fk_pedido_endereco'),
         nullable=False
     )
     id_pagamento = db.Column(
-        db.Integer,
+        db.String(36),
         db.ForeignKey('Pagamento.id', ondelete='SET NULL', name='fk_pedido_pagamento'),
+        nullable=True
+    )
+    
+    id_estado = db.Column(
+        db.String(36),
+        db.ForeignKey('Estado.id', ondelete='SET NULL', name='fk_pedido_estado'),
         nullable=True
     )
 
     total = db.Column(db.Float, nullable=False)
     data_compra = db.Column(db.Date, nullable=False)
-    taxa_frete = db.Column(db.Float, nullable=False)
     
     # Relacionamentos
     usuario = relationship('Usuario', backref='pedidos')
     endereco = relationship('Endereco', backref='pedidos')
     pagamento = relationship('Pagamento', backref='pedidos')
-    
+    estado = relationship('Estado', backref='pedidos', lazy='joined')
     
     #item_pedido
     '''itens_pedido = relationship(  
@@ -41,7 +46,6 @@ class Pedido(db.Model):
         cascade="all, delete-orphan",
         passive_deletes=True
     )'''
-    
     def to_dict(self):
         return {
             "id": self.id,
@@ -67,8 +71,9 @@ class Pedido(db.Model):
 
             "total": self.total,
             "data_compra": self.data_compra.isoformat(),
-            "taxa_frete": self.taxa_frete,
-
-            # Itens do pedido - Aqui estamos incluindo o `to_dict` de cada `ItemPedido`
-            #"itens_pedido": [item.to_dict() for item in self.itens_pedido] if self.itens_pedido else []
+            "estado": {
+                "id": self.estado.id if self.estado else None,
+                "nome": self.estado.nome if self.estado else None,
+                "taxa_frete": self.estado.taxa_frete if self.estado else None
+            } if self.estado else None
         }

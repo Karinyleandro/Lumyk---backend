@@ -119,7 +119,7 @@ OBSERVAÇÃO: configure a váriavel de ambiente no arquivo .env que se encontra 
 ---
 Configuração do arquivo .env:
 Além da senha configurada como recomendado acima, será preciso que você configure os arquivos para smtp:
-Se precisar que eu informe a que eu usei só entrar em contato
+Se precisar que eu informe a senha de app do email que eu usei é só entrar em contato
 
 ```
 #smtp

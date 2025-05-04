@@ -82,17 +82,6 @@ def recuperar_senha(data):
     except EmailNotValidError as e:
         return {'mensagem': f'E-mail inválido: {str(e)}'}, 400
 
-<<<<<<< HEAD
-    if nome and nome != usuario.nome:
-        if Usuario.query.filter(Usuario.nome == nome, Usuario.id != usuario.id).first():
-            return {'mensagem': 'O nome já está em uso.'}, 400
-        usuario.nome = nome
-
-    if email and email != usuario.email:
-        if Usuario.query.filter(Usuario.email == email, Usuario.id != usuario.id).first():
-            return {'mensagem': 'O email já está em uso.'}, 400
-        usuario.email = email
-=======
     usuario = Usuario.query.filter_by(email=email).first()
     if not usuario:
         return {'mensagem': 'E-mail não encontrado.'}, 404
@@ -100,26 +89,17 @@ def recuperar_senha(data):
     codigo = gerar_codigo()
     expiracao = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
     codigos_ativos[email] = (codigo, expiracao)
->>>>>>> feature/kariny
 
     if enviar_email_recuperacao(email, codigo):
         return {'mensagem': 'E-mail de recuperação enviado com sucesso.'}, 200
     else:
         return {'mensagem': 'Erro ao enviar o e-mail de recuperação.'}, 500
 
-<<<<<<< HEAD
-    if data_nascimento_str:
-        try:
-            data_nascimento = datetime.strptime(data_nascimento_str, '%Y-%m-%d')
-        except ValueError:
-            return {'mensagem': 'Data de nascimento inválida. Use o formato YYYY-MM-DD.'}, 400
-=======
 # Função para atualizar senha usando o código enviado por e-mail
 def atualizar_senha(data):
     codigo_recebido = data.get('codigo')
     new_password = data.get('new_password')
     confirm_password = data.get('confirm_password')
->>>>>>> feature/kariny
 
     if not codigo_recebido or not new_password or not confirm_password:
         return {'mensagem': 'Código, nova senha e confirmação são obrigatórios.'}, 400

@@ -11,6 +11,7 @@ def buscar_estado_por_id(id):
     return estado.to_dict(), 200
 
 def criar_estado(data):
+    id_usuario = data.get('id_usuario')
     nome = data.get('nome')
     taxa_frete = data.get('taxa_frete')
 
@@ -25,6 +26,7 @@ def criar_estado(data):
 
     novo_estado = Estado(
         id=str(uuid.uuid4()),
+        id_usuario=id_usuario,
         nome=nome,
         taxa_frete=taxa_frete
     )

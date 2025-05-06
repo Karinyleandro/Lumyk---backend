@@ -26,16 +26,6 @@ Instale as dependências:
 pip install -r C:\Users\karin\Lumyk---backend\requirements.txt
 ```
 
-🚀 Rodando a Aplicação
-Para iniciar a aplicação e acessar a documentação da API:
-```bash
-python run.py
-```
-Acesse no navegador:
-```bash
-http://127.0.0.1:5000/docs
-```
-
 Para rodar as migrations e criar o banco de dados:
 ```bash
 flask --app manage.py db upgrade --directory backend/app/migrations
@@ -54,12 +44,23 @@ Se tudo ocorrer bem, você verá:
   Gêneros inseridos com sucesso!
   
   Livros inseridos com sucesso!
+
+
+ 🚀 Rodando a Aplicação
+Para iniciar a aplicação e acessar a documentação da API:
+```bash
+python run.py
+```
+Acesse no navegador:
+```bash
+http://127.0.0.1:5000/docs
+```
 ---------------------------------------------------------------------------------------------------------------
  OBS: CASO DÊ ALGUM ERRO POR FALTA DE ALGUMA INSTALAÇÃO, RODE:
 ```bash
 pip install Flask==3.1.0 Flask-RESTX==1.1.0 python-dotenv==1.0.0
 ```
-ou, se preciso, modifique a versão para:
+ou, se preciso continuar, modifique a versão para:
 ```` bash
 pip install flask-restx==1.3.0
 ````
@@ -113,4 +114,27 @@ OBSERVAÇÃO: configure a váriavel de ambiente no arquivo .env que se encontra 
    - Exemplo de chave secreta usada para geração e validação de tokens JWT:
  ```
    JWT_SECRET=sua_chave_super_secreta_aqui
+```
+
+---
+Configuração do arquivo .env:
+Além da senha configurada como recomendado acima, será preciso que você configure os arquivos para smtp:
+Se precisar que eu informe a senha de app do email que eu usei é só entrar em contato
+
+```
+#smtp
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=True
+MAIL_USERNAME=lumykbooks@gmail.com
+MAIL_PASSWORD=#senhadoapp
+MAIL_DEFAULT_SENDER=lumykbooks@gmail.com
+```
+
+---
+PARA RODAR A RECUPERAÇÃO DE SENHA, É PRECISO INSTALAR:
+
+```bash
+pip install Flask-Mail
+pip install email-validator
 ```

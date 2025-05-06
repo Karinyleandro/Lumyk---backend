@@ -9,23 +9,9 @@ class Estado(db.Model):
     nome = db.Column(db.String(40), nullable=False)
     taxa_frete = db.Column(db.Float, nullable=True)
     
-    id_usuario = db.Column(
-        db.String(36),
-        db.ForeignKey('Usuario.id', ondelete='CASCADE', name='fk_estado_usuario'),
-        nullable=False
-    )
-    
-    # Relacionamento com a table de usuário
-    usuario = db.relationship('Usuario', backref=db.backref('estados', cascade='all, delete-orphan'))
-
     def to_dict(self):
         return {
             "id": self.id,
             "nome": self.nome,
-            "taxa_frete": self.taxa_frete,
-            "id_usuario": self.id_usuario,
-            "usuario": {
-                "id": self.usuario.id,
-                "nome": self.usuario.nome
-            } if self.usuario else None
+            "taxa_frete": self.taxa_frete
         }

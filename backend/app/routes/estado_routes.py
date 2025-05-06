@@ -7,13 +7,11 @@ api = Namespace('estados', description='Operações relacionadas a Estados')
 
 estado_model = api.model('Estado', {
     'nome': fields.String(required=True),
-    'id_usuario': fields.String(required=True),
     'taxa_frete': fields.Float(required=True)  
 })
 
 estado_get = api.model('EstadoResponse', {
     'id': fields.String(required=True),
-    'id_usuario': fields.String(required=True),
     'nome': fields.String(required=True),
     'taxa_frete': fields.Float(required=True)  
     

@@ -8,7 +8,7 @@ class Estado(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     nome = db.Column(db.String(40), nullable=False)
     taxa_frete = db.Column(db.Float, nullable=True)
-
+    
     def to_dict(self):
         return {
             "id": self.id,

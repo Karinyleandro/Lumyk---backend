@@ -121,6 +121,14 @@ Configuração do arquivo .env:
 Além da senha configurada como recomendado acima, será preciso que você configure os arquivos para smtp:
 Se precisar que eu informe a senha de app do email que eu usei é só entrar em contato
 
+
+Configure no .env também a expiração do token:
+
+```
+#tempo de expirar
+JWT_ACCESS_TOKEN_EXPIRES=False
+```
+
 ```
 #smtp
 MAIL_SERVER=smtp.gmail.com

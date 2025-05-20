@@ -23,7 +23,7 @@ class Endereco(db.Model):
     bairro = db.Column(db.String(40), nullable=True)
     rua = db.Column(db.String(100), nullable=True)
     
-     # Relacionamentos
+    # Relacionamentos
     usuario = db.relationship('Usuario', backref='enderecos', lazy=True)
     estado = db.relationship('Estado', backref='enderecos', lazy=True)
 

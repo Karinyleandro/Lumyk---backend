@@ -10,6 +10,7 @@ from flask import current_app
 from flask_mail import Message
 from email_validator import validate_email, EmailNotValidError
 from backend.app.models.Usuario import Usuario
+from backend.app.models.Endereco import Endereco
 from backend.app.db.config import db
 
 load_dotenv()
@@ -233,11 +234,18 @@ def deletar_usuario(id):
         if not usuario:
             return {'mensagem': 'Usuário não encontrado.'}, 404
 
+        # Buscar todos os endereços vinculados ao usuário
+        enderecos = Endereco.query.filter_by(id_usuario=id).all()
+        for endereco in enderecos:
+            db.session.delete(endereco)
+
+        # Agora deletar o usuário
         db.session.delete(usuario)
         db.session.commit()
 
-        return {'mensagem': 'Usuário deletado com sucesso.'}, 200
+        return {'mensagem': 'Usuário e endereços deletados com sucesso.'}, 200
 
     except Exception as e:
         logger.error(f'Erro ao deletar usuário: {str(e)}')
         return {'mensagem': f'Erro ao deletar usuário: {str(e)}'}, 500
+

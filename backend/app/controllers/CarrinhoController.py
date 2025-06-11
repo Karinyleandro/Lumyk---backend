@@ -18,6 +18,15 @@ def buscar_por_id(id_carrinho):
 def criar_carrinho(data):
     try:
         id_usuario = get_jwt_identity()
+
+        # Verifica se o usuário já tem um carrinho
+        carrinho_existente = Carrinho.query.filter_by(id_usuario=id_usuario).first()
+        if carrinho_existente:
+            return {
+                'mensagem': 'Você já possui um carrinho.',
+                'carrinho': carrinho_existente.to_dict()
+            }, 200  
+
         data_criacao_str = data.get('data_criacao')
         data_criacao = datetime.strptime(data_criacao_str, "%Y-%m-%d").date() if data_criacao_str else date.today()
 
@@ -26,11 +35,19 @@ def criar_carrinho(data):
             id_usuario=id_usuario,
             data_criacao=data_criacao
         )
+
         db.session.add(novo_carrinho)
         db.session.commit()
-        return {'mensagem': 'Carrinho criado com sucesso!', 'carrinho': novo_carrinho.to_dict()}, 201
+
+        return {
+            'mensagem': 'Carrinho criado com sucesso!',
+            'carrinho': novo_carrinho.to_dict()
+        }, 201
+
     except Exception as e:
-        return {'mensagem': f'Erro ao criar carrinho: {str(e)}'}, 500
+        return {
+            'mensagem': f'Erro ao criar carrinho: {str(e)}'
+        }, 500
 
 def atualizar_carrinho(id_carrinho, data, carrinho):
     try:

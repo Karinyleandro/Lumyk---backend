@@ -16,14 +16,18 @@ def buscar_endereco_por_id(id):
 
 def criar_endereco(data):
     usuario_id = get_jwt_identity()
+    
+    if not usuario_id:
+            return ({'mensagem': 'Usuário não autenticado.'}), 401
+
 
     novo_endereco = Endereco(
         id=str(uuid.uuid4()),
         id_usuario=usuario_id,
-        id_estado=data['id_estado'],
-        numero=data['numero'],
-        bairro=data['bairro'],
-        rua=data['rua']
+        id_estado=data.get('id_estado'),
+        numero=data.get('numero'),
+        bairro=data.get('bairro'),
+        rua=data.get('rua')
     )
 
     db.session.add(novo_endereco)

@@ -29,7 +29,7 @@ class EnderecoList(Resource):
     def get(self):
         return EnderecoController.listar_enderecos()[0]
 
-    @api.expect(endereco_model)
+    @api.expect(endereco_model, validate=False)
     @api.doc(security='Bearer Auth')
     @jwt_required()
     @api.response(201, 'Endereço criado com sucesso!')
@@ -45,7 +45,7 @@ class EnderecoResource(Resource):
     def get(self, id):
         return EnderecoController.buscar_endereco_por_id(id)[0]
 
-    @api.expect(endereco_model)
+    @api.expect(endereco_model, validate=False)
     @api.doc(security='Bearer Auth')
     @jwt_required()
     @autorizacao_endereco

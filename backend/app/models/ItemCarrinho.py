@@ -19,6 +19,9 @@ class ItemCarrinho(db.Model):
         nullable=False
     )
     
+    quantidade = db.Column(db.Integer, nullable=False)
+    preco_unitario = db.Column(db.Float, nullable=False)
+    
     #relacionamentos
     carrinho = db.relationship('Carrinho', backref=db.backref('itens', cascade='all, delete-orphan'))
     livro = db.relationship('Livro')
@@ -27,7 +30,9 @@ class ItemCarrinho(db.Model):
         base = {
             "id": self.id,
             "id_carrinho": self.id_carrinho,
-            "id_livro": self.id_livro
+            "id_livro": self.id_livro,
+            "quantidade": self.quantidade,
+            "preco_unitario": self.preco_unitario
         }
 
         if incluir_detalhes:

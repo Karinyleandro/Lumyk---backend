@@ -22,17 +22,28 @@ class ItemCarrinhoController:
     def adicionar_item_ao_carrinho(data):
         id_carrinho = data.get('id_carrinho')
         id_livro = data.get('id_livro')
+        quantidade = data.get('quantidade')
+        preco_unitario = data.get('preco_unitario')
 
         carrinho = Carrinho.query.get(id_carrinho)
         livro = Livro.query.get(id_livro)
 
         if not carrinho or not livro:
             return {'mensagem': 'Carrinho ou livro não encontrado'}, 404
+        
+        if quantidade is None or quantidade <= 0:
+            return {'mensagem': 'Quantidade inválida'}, 400
+    
+        if quantidade > livro.estoque:
+            return {
+                'mensagem': f'Estoque insuficiente. Disponível: {livro.estoque}, solicitado: {quantidade}'}, 400
 
         novo_item = ItemCarrinho(
             id=str(uuid.uuid4()),
             id_carrinho=id_carrinho,
-            id_livro=id_livro
+            id_livro=id_livro,
+            quantidade=quantidade,
+            preco_unitario=preco_unitario
         )
 
         db.session.add(novo_item)
@@ -78,6 +89,25 @@ class ItemCarrinhoController:
             if not carrinho:
                 return {'mensagem': 'Carrinho não encontrado'}, 404
             item.id_carrinho = str(novo_id_carrinho)
+            
+        nova_quantidade = data.get('quantidade')
+        if nova_quantidade is not None:
+            if nova_quantidade <= 0:
+                return {'mensagem': 'Quantidade inválida'}, 400
+
+            livro = Livro.query.get(item.id_livro) # ele pega o livro atual
+            if nova_quantidade > livro.estoque:
+                return {'mensagem': f'Quantidade solicitada ({nova_quantidade}) excede o estoque disponível ({livro.estoque})'}, 400
+
+            item.quantidade = nova_quantidade
+
+
+        novo_preco = data.get('preco_unitario')
+        if novo_preco is not None:
+            if novo_preco < 0:
+                return {'mensagem': 'Preço inválido'}, 400
+            item.preco_unitario = novo_preco
+
 
         db.session.commit()
 

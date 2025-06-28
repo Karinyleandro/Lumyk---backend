@@ -19,7 +19,6 @@ from backend.app.routes.itemPedido_routes import api as itemPedido
 from flask_mail import Mail
 from backend.app.models import *
 from dotenv import load_dotenv
-from datetime import timedelta
 import os
 
 #jwt config .evn
@@ -50,12 +49,6 @@ def create_app():
     app.config['JWT_TOKEN_LOCATION'] = ['headers']          
     app.config['JWT_HEADER_NAME'] = 'Authorization'
     app.config['JWT_HEADER_TYPE'] = 'Bearer'
-    
-    jwt_exp = os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 'False')
-    if jwt_exp.lower() == 'false':
-        app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
-    else:
-        app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=int(jwt_exp))
     
     app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')  # E-mail de envio
     app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))  # Porta de envio

@@ -61,8 +61,6 @@ def seed_livros():
             titulo=livro['titulo'],
             sinopse=livro['sinopse'],
             preco=float(livro['preco']),
-            formato=livro['formato'],
-            tipo=livro['tipo'],
             foto=livro['foto'],              
             estoque=int(livro['estoque']),
             id_autor=autor.id,               

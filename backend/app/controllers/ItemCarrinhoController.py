@@ -10,6 +10,11 @@ class ItemCarrinhoController:
     def listar_itens_do_carrinho(id_carrinho):
         itens = ItemCarrinho.query.filter_by(id_carrinho=id_carrinho).all()
         return [item.to_dict(incluir_detalhes=True) for item in itens], 200
+    
+    @staticmethod
+    def listar_todos_itens():
+        itens = ItemCarrinho.query.all()
+        return [item.to_dict(incluir_detalhes=True) for item in itens], 200
 
     @staticmethod
     def buscar_item_por_id(id_item):

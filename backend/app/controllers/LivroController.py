@@ -36,8 +36,6 @@ def criar_livro(data):
         sinopse=data['sinopse'],
         estoque=data['estoque'],
         preco=data['preco'],
-        formato=data['formato'],
-        tipo=data['tipo'],
         titulo=data['titulo']
     )
 
@@ -56,8 +54,6 @@ def atualizar_livro(id, data):
     livro.sinopse = data.get('sinopse', livro.sinopse)
     livro.estoque = data.get('estoque', livro.estoque)
     livro.preco = data.get('preco', livro.preco)
-    livro.formato = data.get('formato', livro.formato)
-    livro.tipo = data.get('tipo', livro.tipo)
     livro.titulo = data.get('titulo', livro.titulo)
 
     # Atualiza o relacionamento com Estado, Usuario, Endereco

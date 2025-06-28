@@ -24,6 +24,10 @@ class ItemPedido(db.Model):
     pedido = db.relationship("Pedido", backref="itens", lazy="joined")  # inner join real
     livro = db.relationship("Livro", backref="itens", lazy="joined")    
     
+    formato = db.Column(db.String(40), nullable=False)
+    tipo = db.Column(db.String(40), nullable=True)
+    
+    
     def to_dict(self):
         return {
             "id": self.id,

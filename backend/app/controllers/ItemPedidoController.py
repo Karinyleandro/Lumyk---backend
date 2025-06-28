@@ -5,6 +5,11 @@ from backend.app.models.Livro import Livro
 from backend.app.db.config import db
 
 class ItemPedidoController:
+    
+    @staticmethod
+    def listar_todos_itens():
+        itens = ItemPedido.query.all()
+        return [item.to_dict() for item in itens], 200
 
     @staticmethod
     def listar_itens_do_pedido(id_pedido):
@@ -24,6 +29,8 @@ class ItemPedidoController:
         id_livro = data.get('id_livro')
         preco_unitario = data.get('preco_unitario')
         quantidade = data.get('quantidade')
+        formato = data.get('formato')
+        tipo = data.get('tipo')
 
         pedido = Pedido.query.get(id_pedido)
         livro = Livro.query.get(id_livro)
@@ -36,7 +43,9 @@ class ItemPedidoController:
             id_pedido=id_pedido,
             id_livro=id_livro,
             preco_unitario=preco_unitario,
-            quantidade=quantidade
+            quantidade=quantidade,
+            formato=formato,
+            tipo=tipo
         )
 
         db.session.add(novo_item)
@@ -69,6 +78,8 @@ class ItemPedidoController:
         novo_id_livro = data.get('id_livro')
         preco_unitario = data.get('preco_unitario')
         quantidade = data.get('quantidade')
+        formato = data.get('formato')
+        tipo = data.get('tipo')
 
         if novo_id_pedido:
             pedido = Pedido.query.get(str(novo_id_pedido))
@@ -87,6 +98,12 @@ class ItemPedidoController:
 
         if quantidade is not None:
             item.quantidade = quantidade
+            
+        if formato is not None:
+            item.formato = formato
+
+        if tipo is not None:
+            item.tipo = tipo
 
         db.session.commit()
 

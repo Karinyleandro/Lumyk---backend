@@ -43,8 +43,6 @@ class Livro(db.Model):
     sinopse = db.Column(db.String(350), nullable=False)
     estoque = db.Column(db.Integer, nullable=False)
     preco = db.Column(db.Float, nullable=False)
-    formato = db.Column(db.String(40), nullable=False)
-    tipo = db.Column(db.String(40), nullable=False)
     titulo = db.Column(db.String(100), nullable=False)
 
     # Relacionamentos
@@ -69,8 +67,6 @@ class Livro(db.Model):
             "sinopse": self.sinopse,
             "estoque": self.estoque,
             "preco": self.preco,
-            "formato": self.formato,
-            "tipo": self.tipo,
             "titulo": self.titulo,
             "genero": {
                 "id": self.genero.id,

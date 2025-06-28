@@ -29,6 +29,8 @@ class ItemCarrinhoController:
         id_livro = data.get('id_livro')
         quantidade = data.get('quantidade')
         preco_unitario = data.get('preco_unitario')
+        formato = data.get('formato') 
+        tipo = data.get('tipo')  
 
         carrinho = Carrinho.query.get(id_carrinho)
         livro = Livro.query.get(id_livro)
@@ -48,7 +50,9 @@ class ItemCarrinhoController:
             id_carrinho=id_carrinho,
             id_livro=id_livro,
             quantidade=quantidade,
-            preco_unitario=preco_unitario
+            preco_unitario=preco_unitario,
+            formato=formato,  
+            tipo=tipo  
         )
 
         db.session.add(novo_item)
@@ -112,7 +116,14 @@ class ItemCarrinhoController:
             if novo_preco < 0:
                 return {'mensagem': 'Preço inválido'}, 400
             item.preco_unitario = novo_preco
+            
+        novo_formato = data.get('formato')
+        if novo_formato is not None:
+            item.formato = novo_formato
 
+        novo_tipo = data.get('tipo')
+        if novo_tipo is not None:
+            item.tipo = novo_tipo
 
         db.session.commit()
 

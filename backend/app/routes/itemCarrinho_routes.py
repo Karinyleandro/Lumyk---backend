@@ -12,6 +12,8 @@ item_model = api.model('ItemCarrinho', {
     'id_livro': fields.String(required=True, description='ID do livro'),
     'quantidade': fields.Integer(required=True, description='Quantidade do item'),
     'preco_unitario': fields.Float(required=True, description='Preço unitário do item'),
+    'formato': fields.String(required=False, description='Formato do item (ex: digital, físico)'),
+    'tipo': fields.String(required=False, description='Tipo do item (ex: capa dura, capa comun)')
 })
 
 # Modelo de resposta com detalhes (inclui id, carrinho, livro, quantidade e preco_unitario)

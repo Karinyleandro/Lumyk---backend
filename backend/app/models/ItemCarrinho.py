@@ -22,6 +22,9 @@ class ItemCarrinho(db.Model):
     quantidade = db.Column(db.Integer, nullable=False)
     preco_unitario = db.Column(db.Float, nullable=False)
     
+    formato = db.Column(db.String(40), nullable=True)
+    tipo = db.Column(db.String(40), nullable=True)
+    
     #relacionamentos
     carrinho = db.relationship('Carrinho', backref=db.backref('itens', cascade='all, delete-orphan'))
     livro = db.relationship('Livro')
@@ -32,7 +35,9 @@ class ItemCarrinho(db.Model):
             "id_carrinho": self.id_carrinho,
             "id_livro": self.id_livro,
             "quantidade": self.quantidade,
-            "preco_unitario": self.preco_unitario
+            "preco_unitario": self.preco_unitario,
+            "formato": self.formato,
+            "tipo": self.tipo
         }
 
         if incluir_detalhes:

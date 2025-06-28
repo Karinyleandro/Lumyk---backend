@@ -35,6 +35,8 @@ class ItemPedido(db.Model):
             "id_livro": self.id_livro,
             "preco_unitario": self.preco_unitario,
             "quantidade": self.quantidade,
+            "formato": self.formato,
+            "tipo": self.tipo,
             "pedido": {
                 "id": self.pedido.id,
                 "data_compra": self.pedido.data_compra.isoformat(),

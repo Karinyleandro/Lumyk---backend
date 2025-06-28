@@ -16,14 +16,14 @@ class Endereco(db.Model):
     id_estado = db.Column(
         db.String(36),
         db.ForeignKey('Estado.id', ondelete='CASCADE', name='fk_endereco_estado'),
-        nullable=False
+        nullable=True
     )
 
-    numero = db.Column(db.Integer, nullable=False)
-    bairro = db.Column(db.String(40), nullable=False)
-    rua = db.Column(db.String(100), nullable=False)
+    numero = db.Column(db.Integer, nullable=True)
+    bairro = db.Column(db.String(40), nullable=True)
+    rua = db.Column(db.String(100), nullable=True)
     
-     # Relacionamentos
+    # Relacionamentos
     usuario = db.relationship('Usuario', backref='enderecos', lazy=True)
     estado = db.relationship('Estado', backref='enderecos', lazy=True)
 

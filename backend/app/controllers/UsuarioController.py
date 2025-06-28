@@ -10,6 +10,7 @@ from flask import current_app
 from flask_mail import Message
 from email_validator import validate_email, EmailNotValidError
 from backend.app.models.Usuario import Usuario
+from backend.app.models.Endereco import Endereco
 from backend.app.db.config import db
 
 load_dotenv()
@@ -51,7 +52,7 @@ def enviar_email_recuperacao(email, codigo):
                 <p style="color: #FF0000;">Não compartilhe este código com ninguém.</p>
                 <p style="color: #000000;">Se você não solicitou esta recuperação, ignore este e-mail.</p>
                 <br>
-                <p style="color: #000000;">Atenciosamente,<br>Sua equipe</p>
+                <p style="color: #000000;">Atenciosamente,<br>Equipe Lumyk</p>
             </div>
         </body>
     </html>
@@ -101,15 +102,10 @@ def atualizar_senha(data):
     new_password = data.get('new_password')
     confirm_password = data.get('confirm_password')
 
-    if not codigo_recebido or not new_password or not confirm_password:
-        return {'mensagem': 'Código, nova senha e confirmação são obrigatórios.'}, 400
+    if not codigo_recebido:
+        return {'mensagem': 'Código é obrigatório.'}, 400
 
-    if new_password != confirm_password:
-        return {'mensagem': 'As senhas não conferem.'}, 400
-
-    if len(new_password) < 6 or len(new_password) > 8:
-        return {'mensagem': 'A senha deve ter entre 6 e 8 caracteres.'}, 400
-
+    # Verifica se o código é válido (mesmo se senha ainda não foi enviada)
     email_encontrado = None
     for email, (codigo, expiracao) in codigos_ativos.items():
         if codigo == codigo_recebido:
@@ -120,10 +116,23 @@ def atualizar_senha(data):
         return {'mensagem': 'Código inválido.'}, 401
 
     codigo_armazenado, expiracao = codigos_ativos[email_encontrado]
-
     if datetime.datetime.utcnow() > expiracao:
         del codigos_ativos[email_encontrado]
         return {'mensagem': 'O código expirou.'}, 401
+
+    # Se senha não foi enviada ainda, só retorna sucesso
+    if not new_password and not confirm_password:
+        return {'mensagem': 'Código confirmado com sucesso.'}, 200
+
+    # Agora validação da senha (caso esteja sendo enviada)
+    if not new_password or not confirm_password:
+        return {'mensagem': 'Nova senha e confirmação são obrigatórias.'}, 400
+
+    if new_password != confirm_password:
+        return {'mensagem': 'As senhas não conferem.'}, 400
+
+    if len(new_password) < 6 or len(new_password) > 8:
+        return {'mensagem': 'A senha deve ter entre 6 e 8 caracteres.'}, 400
 
     try:
         usuario = Usuario.query.filter_by(email=email_encontrado).first()
@@ -136,10 +145,7 @@ def atualizar_senha(data):
         if not usuario.data_nascimento:
             return {'mensagem': 'Data de nascimento não cadastrada.'}, 400
 
-        if isinstance(usuario.data_nascimento, datetime.datetime):
-            data_nasc = usuario.data_nascimento.date()
-        else:
-            data_nasc = usuario.data_nascimento
+        data_nasc = usuario.data_nascimento.date() if isinstance(usuario.data_nascimento, datetime.datetime) else usuario.data_nascimento
 
         if data_nasc > idade_minima.date():
             return {'mensagem': 'É necessário ter pelo menos 14 anos para atualizar a senha.'}, 400
@@ -154,6 +160,7 @@ def atualizar_senha(data):
     except Exception as e:
         logger.error(f'Erro inesperado ao atualizar senha: {str(e)}')
         return {'mensagem': f'Erro inesperado: {str(e)}'}, 500
+
 
 # Função para atualizar o usuário
 def atualizar_usuario(id, data):
@@ -233,11 +240,18 @@ def deletar_usuario(id):
         if not usuario:
             return {'mensagem': 'Usuário não encontrado.'}, 404
 
+        # Buscar todos os endereços vinculados ao usuário
+        enderecos = Endereco.query.filter_by(id_usuario=id).all()
+        for endereco in enderecos:
+            db.session.delete(endereco)
+
+        # Agora deletar o usuário
         db.session.delete(usuario)
         db.session.commit()
 
-        return {'mensagem': 'Usuário deletado com sucesso.'}, 200
+        return {'mensagem': 'Usuário e endereços deletados com sucesso.'}, 200
 
     except Exception as e:
         logger.error(f'Erro ao deletar usuário: {str(e)}')
         return {'mensagem': f'Erro ao deletar usuário: {str(e)}'}, 500
+

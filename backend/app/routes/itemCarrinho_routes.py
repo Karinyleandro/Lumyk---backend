@@ -9,7 +9,9 @@ api = Namespace('item-carrinho', description='Operações relacionadas a Itens d
 # Modelo de entrada
 item_model = api.model('ItemCarrinho', {
     'id_carrinho': fields.String(required=True, description='ID do carrinho'),
-    'id_livro': fields.String(required=True, description='ID do livro')
+    'id_livro': fields.String(required=True, description='ID do livro'),
+    'quantidade': fields.Integer(required=True, description='Quantidade do item'),
+    'preco_unitario': fields.Float(required=True, description='Preço unitário do item'),
 })
 
 # Modelo de resposta com detalhes
@@ -19,17 +21,24 @@ item_response = api.clone('ItemCarrinhoResponse', item_model, {
     'carrinho': fields.Raw(description='Detalhes do carrinho')
 })
 
+
 @api.route('/')
 class AdicionarItem(Resource):
     @jwt_required()
     @api.expect(item_model)
-    @api.marshal_with(item_response, code=201)
-    @api.response(400, 'Campos obrigatórios ausentes ou inválidos')
+    @api.response(201, 'Item adicionado com sucesso')
+    @api.response(400, 'Estoque insuficiente ou dados inválidos')
     @api.response(404, 'Carrinho ou livro não encontrado')
     @autorizacao_carrinho
-    def post(self, item=None):  # item é injetado pelo middleware
+    def post(self, item=None):
         data = request.get_json()
-        return ItemCarrinhoController.adicionar_item_ao_carrinho(data)
+        resposta, status = ItemCarrinhoController.adicionar_item_ao_carrinho(data)
+        if status == 201:
+            # Só aplica a serialização se o status for 201
+            from flask_restx import marshal
+            return marshal(resposta, item_response), 201
+        return resposta, status
+
 
 @api.route('/<string:id_item>')
 @api.param('id_item', 'ID do item do carrinho')

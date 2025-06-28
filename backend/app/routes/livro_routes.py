@@ -39,7 +39,7 @@ endereco_model = api.model('EnderecoResponse', {
     'rua': fields.String(description='Rua'),
 })
 
-# Model de entrada (criação e atualização de livros)
+# Model de entrada para criar/atualizar livro
 livro_model = api.model('Livro', {
     'id_genero': fields.String(required=True, description='ID do Gênero'),
     'id_autor': fields.String(required=True, description='ID do Autor'),
@@ -47,15 +47,13 @@ livro_model = api.model('Livro', {
     'sinopse': fields.String(required=True, description='Sinopse do Livro'),
     'estoque': fields.Integer(required=True, description='Quantidade em Estoque'),
     'preco': fields.Float(required=True, description='Preço do Livro'),
-    'formato': fields.String(required=True, description='Formato do Livro'),
-    'tipo': fields.String(required=True, description='Tipo do Livro'),
     'titulo': fields.String(required=True, description='Título do Livro'),
     'id_estado': fields.String(description='ID do Estado'),
     'id_usuario': fields.String(description='ID do Usuário'),
     'id_endereco': fields.String(description='ID do Endereço')
 })
 
-# Model de resposta (quando retorna o livro com os relacionamentos completos)
+# Model de resposta com relacionamentos completos
 livro_response = api.model('LivroResponse', {
     'id': fields.String(description='ID do Livro'),
     'id_genero': fields.String(description='ID do Gênero'),
@@ -72,8 +70,6 @@ livro_response = api.model('LivroResponse', {
     'sinopse': fields.String(description='Sinopse do Livro'),
     'estoque': fields.Integer(description='Quantidade em Estoque'),
     'preco': fields.Float(description='Preço do Livro'),
-    'formato': fields.String(description='Formato do Livro'),
-    'tipo': fields.String(description='Tipo do Livro'),
     'titulo': fields.String(description='Título do Livro'),
 })
 
@@ -83,20 +79,24 @@ livro_response = api.model('LivroResponse', {
 class LivroList(Resource):
     @api.marshal_list_with(livro_response)
     def get(self):
+        """Listar todos os livros"""
         return LivroController.listar_livros()[0]
 
     @jwt_required()
     @api.expect(livro_model)
     @api.response(201, 'Livro criado com sucesso!')
     def post(self):
+        """Criar um novo livro"""
         data = request.get_json()
         return LivroController.criar_livro(data)
+
 
 @api.route('/<string:id>')
 @api.param('id', 'ID do livro')
 class LivroResource(Resource):
     @api.marshal_with(livro_response)
     def get(self, id):
+        """Buscar livro por ID"""
         return LivroController.buscar_livro_por_id(id)[0]
 
     @jwt_required()
@@ -104,6 +104,7 @@ class LivroResource(Resource):
     @api.expect(livro_model)
     @api.response(200, 'Livro atualizado com sucesso!')
     def put(self, id):
+        """Atualizar livro"""
         data = request.get_json()
         return LivroController.atualizar_livro(id, data)
 
@@ -111,4 +112,5 @@ class LivroResource(Resource):
     @autorizacao_livro
     @api.response(200, 'Livro deletado com sucesso!')
     def delete(self, id):
+        """Deletar livro"""
         return LivroController.deletar_livro(id)

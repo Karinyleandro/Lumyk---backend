@@ -94,5 +94,11 @@ def create_app():
     api.add_namespace(assinatura, path='/assinaturas')
     api.add_namespace(itemCarrinho, path='/item-carrinho')
     api.add_namespace(itemPedido, path='/item-pedido')
+    # 
+    
+    
+    
+    
+    
     
     return app

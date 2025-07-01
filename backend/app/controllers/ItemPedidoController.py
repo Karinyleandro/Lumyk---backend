@@ -37,6 +37,12 @@ class ItemPedidoController:
 
         if not pedido or not livro:
             return {'mensagem': 'Pedido ou livro não encontrado'}, 404
+        
+        if quantidade is None or not isinstance(quantidade, int) or quantidade <= 0:
+            return {'mensagem': 'Quantidade inválida. Deve ser um número inteiro maior que zero.'}, 400
+
+        if livro.estoque < quantidade:
+            return {'mensagem': f'Quantidade solicitada ({quantidade}) excede o estoque disponível ({livro.estoque})'}, 400
 
         novo_item = ItemPedido(
             id=str(uuid.uuid4()),
@@ -49,6 +55,9 @@ class ItemPedidoController:
         )
 
         db.session.add(novo_item)
+        
+        livro.estoque -= quantidade
+         
         db.session.commit()
 
         return novo_item.to_dict(), 201
@@ -66,6 +75,7 @@ class ItemPedidoController:
         return {'mensagem': 'Item removido com sucesso!', 'item': item_dict}, 200
 
     @staticmethod
+    
     def atualizar_item_pedido(id_item, data):
         if not isinstance(data, dict):
             data = data.__dict__ if hasattr(data, '__dict__') else {}
@@ -87,18 +97,42 @@ class ItemPedidoController:
                 return {'mensagem': 'Pedido não encontrado'}, 404
             item.id_pedido = str(novo_id_pedido)
 
-        if novo_id_livro:
-            livro = Livro.query.get(str(novo_id_livro))
-            if not livro:
-                return {'mensagem': 'Livro não encontrado'}, 404
+        livro_atual = Livro.query.get(item.id_livro)
+
+        if novo_id_livro and novo_id_livro != item.id_livro:
+            livro_novo = Livro.query.get(str(novo_id_livro))
+            if not livro_novo:
+                return {'mensagem': 'Novo livro não encontrado'}, 404
+
+            if livro_atual:
+                livro_atual.estoque += item.quantidade
+
+            if quantidade is None:
+                quantidade = item.quantidade  
+
+            if quantidade > livro_novo.estoque:
+                return {'mensagem': f'Quantidade solicitada ({quantidade}) excede o estoque disponível ({livro_novo.estoque})'}, 400
+
+            livro_novo.estoque -= quantidade
             item.id_livro = str(novo_id_livro)
+
+        elif quantidade is not None:
+            if not isinstance(quantidade, int) or quantidade <= 0:
+                return {'mensagem': 'Quantidade inválida. Deve ser um número inteiro maior que zero.'}, 400
+
+            if livro_atual:
+                estoque_disponivel = livro_atual.estoque + item.quantidade
+                if quantidade > estoque_disponivel:
+                    return {'mensagem': f'Quantidade solicitada ({quantidade}) excede o estoque disponível ({estoque_disponivel})'}, 400
+
+                livro_atual.estoque = estoque_disponivel - quantidade
+
+        if quantidade is not None:
+            item.quantidade = quantidade
 
         if preco_unitario is not None:
             item.preco_unitario = preco_unitario
 
-        if quantidade is not None:
-            item.quantidade = quantidade
-            
         if formato is not None:
             item.formato = formato
 

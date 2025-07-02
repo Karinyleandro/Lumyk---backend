@@ -20,7 +20,7 @@ def buscar_pedido_por_id(id_pedido):
     return pedido.to_dict(), 200
 
 def criar_pedido(data, id_usuario):
-    campos_obrigatorios = ['id_endereco', 'total', 'data_compra', 'id_estado']
+    campos_obrigatorios = ['id_endereco', 'total', 'data_compra']
     faltando = [campo for campo in campos_obrigatorios if not data.get(campo)]
     if faltando:
         return {'mensagem': f'Campos obrigatórios ausentes: {", ".join(faltando)}'}, 400

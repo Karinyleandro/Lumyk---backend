@@ -52,8 +52,11 @@ def atualizar_endereco(endereco, data):
         'endereco': endereco.to_dict()
     }, 200
 
-
 def deletar_endereco(endereco):
+    if endereco.pedidos:  
+        return {'erro': 'Não é possível deletar endereço vinculado a pedidos'}, 400
+
     db.session.delete(endereco)
     db.session.commit()
     return {'mensagem': 'Endereço deletado com sucesso!'}, 200
+
